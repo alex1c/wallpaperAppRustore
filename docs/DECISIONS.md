@@ -1,0 +1,215 @@
+# Architecture Decision Log
+
+Lightweight ADR format. New decisions append at the bottom.
+
+---
+
+## 2026-08-18 — Expo instead of bare React Native
+
+**Status:** Accepted
+
+**Context:** Need fast Android iteration, native SDK support later, small team.
+
+**Decision:** Use Expo with prebuild/CNG rather than bare React Native.
+
+**Why:** Official native module workflow, Router, and dev builds reduce maintenance while staying compatible with Yandex/AppMetrica SDKs via config plugins or custom dev clients.
+
+**Consequences:** Must use development builds for native SDK testing; Expo Go is not the primary target.
+
+---
+
+## 2026-08-18 — Expo Development Build instead of Expo Go
+
+**Status:** Accepted
+
+**Context:** Ad and analytics SDKs require native code.
+
+**Decision:** Target `expo-dev-client` and `expo run:android` workflows.
+
+**Why:** Expo Go cannot host arbitrary native monetization/analytics modules.
+
+**Consequences:** Developers need Android SDK + JDK; slightly longer first build.
+
+---
+
+## 2026-08-18 — Android / RuStore first
+
+**Status:** Accepted
+
+**Context:** Primary market is Russia; RuStore is the first distribution channel.
+
+**Decision:** Android-first; defer iOS and international store polish.
+
+**Why:** Focus resources on one store and one platform until RPI is measured.
+
+**Consequences:** iOS config exists minimally in app.json but is not validated in Phase 0–1.
+
+---
+
+## 2026-08-18 — Separate niche apps vs one mega-app
+
+**Status:** Accepted
+
+**Context:** ASO and user intent favor focused apps.
+
+**Decision:** Ship many small apps sharing engineering patterns, not one “100 calculators” app.
+
+**Why:** Better store conversion, clearer marketing, independent kill/scale per niche.
+
+**Consequences:** Some duplication until Phase 9 extraction; boundaries must stay clean now.
+
+---
+
+## 2026-08-18 — Pure TypeScript calculation layer
+
+**Status:** Accepted
+
+**Context:** Calculator correctness is core product value.
+
+**Decision:** All business math in `src/domain/` as pure TypeScript.
+
+**Why:** Testable without RN; reusable in future shared packages.
+
+**Consequences:** UI must validate/convert inputs before calling domain functions.
+
+---
+
+## 2026-08-18 — Advertising behind AdService
+
+**Status:** Accepted
+
+**Context:** Yandex stack is likely but not final; UI must stay provider-agnostic.
+
+**Decision:** `AdService` interface + noop dev implementation in Phase 0–1.
+
+**Why:** Swap providers without rewriting screens.
+
+**Consequences:** Phase 5 adds `YandexAdService` without UI churn.
+
+---
+
+## 2026-08-18 — Analytics behind AnalyticsService
+
+**Status:** Accepted
+
+**Context:** AppMetrica planned for RU release.
+
+**Decision:** Semantic events via `AnalyticsService`; dev logger now, AppMetrica later.
+
+**Why:** Same boundary pattern as ads; enables testing without SDK.
+
+**Consequences:** Phase 5 implements real sender behind the same API.
+
+---
+
+## 2026-08-18 — Russian first, internationalization ready
+
+**Status:** Accepted
+
+**Context:** RU is primary UX; EN and other locales are future.
+
+**Decision:** All strings in i18n catalogs; RU complete for foundation screens; EN partial.
+
+**Why:** Avoid retrofitting i18n after UI is built.
+
+**Consequences:** No hardcoded user-visible strings in components.
+
+---
+
+## 2026-08-18 — No premature monorepo
+
+**Status:** Accepted
+
+**Context:** Platform vision spans many apps; economics unproven.
+
+**Decision:** Single repo, clear folders, extract only after Wallpaper RPI data.
+
+**Why:** Monorepo overhead before validation slows the first experiment.
+
+**Consequences:** Copy/template extraction in Phase 9 if metrics justify it.
+
+---
+
+## 2026-08-18 — No App Open Ads in initial monetization
+
+**Status:** Accepted
+
+**Context:** Aggressive ads hurt retention and store ratings.
+
+**Decision:** Banner + capped interstitial + optional rewarded; exclude App Open Ads from MVP plan.
+
+**Why:** Protect D1 retention while still pursuing ad revenue.
+
+**Consequences:** Revenue model relies on in-session impressions, not launch intercepts.
+
+---
+
+## 2026-08-18 — npm legacy-peer-deps on Windows external drive
+
+**Status:** Superseded (2026-08-18)
+
+**Context:** npm strict peer resolution failed on react-dom vs react 19.2.x during Phase 0–1 setup.
+
+**Decision:** ~~Add `.npmrc` with `legacy-peer-deps=true`~~ Removed in Phase 1.5.
+
+**Why removed:** With npm 11 and current Expo SDK 57 tree, `npm install` completes successfully without `legacy-peer-deps`. npm emits `ERESOLVE overriding peer dependency` for `react-dom@19.2.8` (transitive via `expo-router`) vs pinned `react@19.2.3` — this is expected for Android-first apps without `react-dom` as a direct dependency.
+
+**Consequences:** Do not re-add `.npmrc` unless a future npm/dependency upgrade blocks install again. Root conflict: `expo-router` → `@expo/metro-runtime` → `react-dom@19.2.8` requires `react@^19.2.8`; Expo SDK 57 pins `react@19.2.3`.
+
+---
+
+## 2026-08-18 — JDK 17 required for Android native builds
+
+**Status:** Accepted
+
+**Context:** Android Studio at `D:\AndroidStudio` ships JBR **Java 25.0.2**. Gradle `assembleDebug` fails on CMake configure tasks (`react-native-screens`, `react-native-worklets`) with: `WARNING: A restricted method in java.lang.System has been called`.
+
+**Decision:** Use **JDK 17** for Android builds (`JAVA_HOME`). Do not use Android Studio bundled JBR 25 for Gradle/CMake.
+
+**Why:** React Native 0.86 / Expo SDK 57 native modules require a JDK compatible with Android Gradle Plugin and CMake tooling; Java 25 restrictions break native configure steps.
+
+**Consequences:** Install JDK 17 (e.g. Eclipse Temurin 17) and set `$env:JAVA_HOME` per shell session. Android Studio IDE can still use its bundled JBR for the IDE itself.
+
+**Verified SDK components** (auto-installed during first Gradle run): Platform 36, Build-Tools 35.0.0 & 36.0.0, NDK 27.1.12297006, CMake 3.22.1.
+
+---
+
+## 2026-08-18 — Node.js version for Expo SDK 57
+
+**Status:** Accepted
+
+**Context:** Machine runs Node 24.14.0; Expo SDK 57 minimum is Node 22.13.x.
+
+**Decision:** Node 24 works for JS tooling today; **recommend Node 22 LTS** for long-term stability when convenient. Do not force global downgrade without version manager.
+
+**Why:** Expo documents minimum 22.13.x; LTS reduces toolchain surprise. No version manager detected on this machine.
+
+**Consequences:** Document in README; revisit if Expo/RN tooling reports Node 24 incompatibilities.
+
+---
+
+## 2026-08-18 — Jest node environment for domain tests (Phase 0–1)
+
+**Status:** Accepted
+
+**Context:** jest-expo requires full react-native install integrity; domain tests are pure TypeScript.
+
+**Decision:** Use Jest with `testEnvironment: 'node'` and babel-jest for Phase 0–1; reserve jest-expo for component tests in Phase 3+.
+
+**Why:** Reliable unit tests for calculation engine without RN runtime.
+
+**Consequences:** UI/component tests will need jest-expo configuration later.
+
+---
+
+## 2026-08-18 — Canonical length unit: millimeters
+
+**Status:** Accepted
+
+**Context:** Wallpaper math needs precision; RU users often think in cm/m.
+
+**Decision:** Domain stores lengths in mm; UI converts from cm for input/display.
+
+**Why:** Integer-friendly, consistent area math, clear conversion boundary.
+
+**Consequences:** All domain APIs use `Millimeters` / `SquareMillimeters` branded types.
