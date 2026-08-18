@@ -1,67 +1,54 @@
-import { rectangleAreaMm } from '@/units'
+import { DEFAULT_QUICK_CORNER_POLICY } from './corner-policy'
+import { DEFAULT_TRIM_ALLOWANCE } from './defaults'
+import { normalizeQuickRoomToWalls } from './geometry'
+import { calculateWallpaper } from './calculate'
 import type {
   QuickWallpaperCalculationInput,
   QuickWallpaperCalculationOutcome,
 } from './types'
+import { validateQuickCalculationInput } from './validation'
 
 /**
- * Computes total wall area for a rectangular room (four walls, no openings).
- * Openings, rapport, and cut planning belong to later phases.
+ * Quick-mode entry: rectangular room → normalized walls → shared engine.
+ * Applies default trim and corner policies when omitted.
  */
-function calculateWallAreaMm2(input: QuickWallpaperCalculationInput) {
-  const { room } = input
-  const perimeterMm = 2 * (room.widthMm + room.lengthMm)
-  return rectangleAreaMm(perimeterMm as typeof room.widthMm, room.heightMm)
+export function calculateQuickWallpaper(
+  input: QuickWallpaperCalculationInput | unknown,
+): QuickWallpaperCalculationOutcome {
+  const trim = (input !== null && typeof input === 'object' && 'trim' in input
+    ? (input as QuickWallpaperCalculationInput).trim
+    : undefined) ?? DEFAULT_TRIM_ALLOWANCE
+  const cornerAllowance = (input !== null && typeof input === 'object' && 'cornerAllowance' in input
+    ? (input as QuickWallpaperCalculationInput).cornerAllowance
+    : undefined) ?? DEFAULT_QUICK_CORNER_POLICY
+
+  const inputValidation = validateQuickCalculationInput(
+    input,
+    trim,
+    cornerAllowance,
+  )
+  if (!inputValidation.ok) {
+    return inputValidation
+  }
+
+  const validated = inputValidation.input
+  const walls = normalizeQuickRoomToWalls(validated.room)
+
+  return calculateWallpaper({
+    walls,
+    roll: validated.roll,
+    trim: validated.trim ?? trim,
+    pattern: validated.pattern,
+    cornerAllowance: validated.cornerAllowance ?? cornerAllowance,
+  })
 }
 
 /**
- * Phase 0–1 placeholder: simple area-based roll estimate with waste allowance.
- * Pure TypeScript — no React, Expo, ads, or analytics dependencies.
+ * @deprecated Phase 0–1 area-based placeholder removed in Phase 2.
+ * Use calculateQuickWallpaper for strip-based results.
  */
 export function calculateQuickWallpaperRolls(
   input: QuickWallpaperCalculationInput,
 ): QuickWallpaperCalculationOutcome {
-  const dimensions = [
-    input.room.widthMm,
-    input.room.lengthMm,
-    input.room.heightMm,
-    input.roll.widthMm,
-    input.roll.lengthMm,
-  ]
-
-  if (dimensions.some((value) => !Number.isFinite(value) || value <= 0)) {
-    return {
-      ok: false,
-      error: {
-        code: 'INVALID_DIMENSION',
-        message: 'All dimensions must be positive finite numbers.',
-      },
-    }
-  }
-
-  if (!Number.isFinite(input.wastePercent) || input.wastePercent < 0) {
-    return {
-      ok: false,
-      error: {
-        code: 'INVALID_WASTE',
-        message: 'Waste percent must be a non-negative finite number.',
-      },
-    }
-  }
-
-  const wallAreaMm2 = calculateWallAreaMm2(input)
-  const rollAreaMm2 = rectangleAreaMm(input.roll.widthMm, input.roll.lengthMm)
-  const wasteMultiplier = 1 + input.wastePercent / 100
-  const adjustedAreaMm2 = wallAreaMm2 * wasteMultiplier
-  const rollsRequired = Math.max(1, Math.ceil(adjustedAreaMm2 / rollAreaMm2))
-
-  return {
-    ok: true,
-    result: {
-      wallAreaMm2,
-      rollAreaMm2,
-      rollsRequired,
-      wasteMultiplier,
-    },
-  }
+  return calculateQuickWallpaper(input)
 }

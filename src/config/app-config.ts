@@ -14,9 +14,6 @@ export const appConfig = {
 
   /** Product identifier inside the Calculator Platform portfolio. */
   productId: 'wallpaper-calculator',
-
-  /** Default waste allowance for quick placeholder calculations (%). */
-  defaultWastePercent: 10,
 } as const
 
 export type SupportedLocale = (typeof appConfig.supportedLocales)[number]

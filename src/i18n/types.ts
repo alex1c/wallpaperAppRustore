@@ -22,6 +22,7 @@ export interface TranslationTree {
     unitCm: string
     calculate: string
     resultRolls: string
+    resultStrips: string
     resultArea: string
     resultWithWaste: string
   }

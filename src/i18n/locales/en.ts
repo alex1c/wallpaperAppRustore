@@ -17,7 +17,7 @@ export const en: TranslationTree = {
   wallpaper: {
     heading: 'Quick estimate',
     placeholderNote:
-      'Demo calculation for architecture validation. Full formula arrives in Phase 2.',
+      'Demo strip-based calculation (Phase 2). Pattern matching not applied — see Phase 3 advanced flow.',
     roomWidth: 'Room width',
     roomLength: 'Room length',
     roomHeight: 'Room height',
@@ -25,7 +25,8 @@ export const en: TranslationTree = {
     rollLength: 'Roll length',
     unitCm: 'cm',
     calculate: 'Calculate',
-    resultRolls: 'Rolls required',
+    resultRolls: 'Minimum rolls',
+    resultStrips: 'Strips',
     resultArea: 'Wall area',
     resultWithWaste: 'Including waste allowance',
   },

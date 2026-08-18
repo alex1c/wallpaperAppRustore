@@ -11,11 +11,11 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 1.5 — Android dev environment** (in progress)
+**Phase 2 — Wallpaper calculation engine** (complete, pending commit)
 
-Phase 0–1 foundation is complete. Current focus: JDK 17, Android SDK, reproducible prebuild, Gradle debug build.
+Phase 2.1 remediation accepted by re-audit. Minimal cleanup done; ready for baseline commit.
 
-**Do NOT implement Phase 2+ scope** (full wallpaper math, production ads, AppMetrica, RuStore release).
+**Do NOT implement Phase 3+ scope** (polished MVP UX, production ads, AppMetrica, RuStore release).
 
 ## Tech stack (pinned at project creation)
 
@@ -56,6 +56,7 @@ Verify exact versions in `package.json` after install.
 | Document | Purpose |
 |----------|---------|
 | [docs/PRODUCT_STRATEGY.md](docs/PRODUCT_STRATEGY.md) | Portfolio vision, market, metrics |
+| [docs/WALLPAPER_PRODUCT_SPEC.md](docs/WALLPAPER_PRODUCT_SPEC.md) | Product spec — calculation model, modes, deferred scope |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Layer boundaries and diagrams |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Phased delivery plan |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | ADR log — architectural decisions |

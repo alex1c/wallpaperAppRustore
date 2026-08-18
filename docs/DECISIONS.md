@@ -213,3 +213,109 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Integer-friendly, consistent area math, clear conversion boundary.
 
 **Consequences:** All domain APIs use `Millimeters` / `SquareMillimeters` branded types.
+
+---
+
+## 2026-08-18 — Strip-based wallpaper calculation (Phase 2)
+
+**Status:** Accepted
+
+**Context:** Phase 0–1 used an area-based placeholder with a flat waste percentage. Product spec requires counting whole vertical strips, explicit roll usage, and separated minimum vs recommended rolls.
+
+**Decision:** Replace area-based roll estimate with a strip-based engine in `src/domain/wallpaper/`. Quick mode normalizes rectangular room → `Wall[]` → shared `calculateWallpaper()`.
+
+**Formulas (quick mode):**
+
+- `requiredStrips = ceil(perimeter / rollWidth)`
+- `rawStripLength = maxWallHeight + topTrim + bottomTrim`
+- `effectiveStripLength = rawStripLength` (free) or `ceil(raw / repeat) × repeat` (straight)
+- `stripsPerFullRoll = floor(rollLength / effectiveStripLength)`
+- `minimumRolls = ceil(requiredStrips / stripsPerFullRoll)`
+
+**Why:** Matches how wallpaper is actually cut and purchased; enables explainable `rollUsage` and independent reference tests.
+
+**Consequences:** Area remains informational only. Recommendation policy lives in `recommendRolls()`, not in the core. Half-drop and opening geometry remain deferred.
+
+---
+
+## 2026-08-18 — Default trim allowance 50 mm top + 50 mm bottom
+
+**Status:** Accepted
+
+**Context:** Quick mode needs a conservative default when the user does not specify trim.
+
+**Decision:** `DEFAULT_TRIM_ALLOWANCE`: top 50 mm, bottom 50 mm (total 100 mm). Documented in `WALLPAPER_PRODUCT_SPEC.md`.
+
+**Why:** Typical cutting/leveling margin at ceiling and floor without overstating waste.
+
+**Consequences:** Precise mode (Phase 4) may expose user-editable trim; domain accepts explicit `TrimAllowance`.
+
+---
+
+## 2026-08-18 — Spare roll recommendation policy (Phase 2 initial)
+
+**Status:** Accepted
+
+**Context:** Product must distinguish mathematical minimum from purchase recommendation without hiding +10% in the core.
+
+**Decision:** `recommendRolls(minimumRolls)`: when `minimumRolls >= 2`, recommend `minimumRolls + 1` spare with reason codes (`SPARE_FOR_*`); when `minimumRolls === 1`, no spare.
+
+**Why:** Allows UI copy “Minimum: N / For spare: N+1” with explicit product reasons.
+
+**Consequences:** Policy is adjustable without changing calculation core; reason codes are domain enums, not UI strings.
+
+---
+
+## 2026-08-18 — Physical straight-match roll planner (Phase 2.1)
+
+**Status:** Accepted
+
+**Context:** Codex audit found `floor(rollLength / patternStep)` conflates alignment step with physical cut length and over-counts material; trailing alignment gap after the last strip was wrongly included.
+
+**Decision:** Separate `rawStripLengthMm` (physical cut) from `patternStepMm` (start-to-start alignment). Count strips with greedy placement: next start += patternStep while `start + raw <= rollLength`. Each new roll assumes pattern phase zero.
+
+**Why:** Matches real cutting; regression `raw=2800, step=3200, roll=9200` → 3 strips ending at 9200.
+
+**Consequences:** `MaterialBreakdown` replaces opaque `WasteMetrics`. `patternPhase.minimumRollsDependsOnPhaseAssumption` documents limitation.
+
+---
+
+## 2026-08-18 — Quick-mode corner allowance policy (Phase 2.1)
+
+**Status:** Accepted
+
+**Context:** `ceil(perimeter / rollWidth)` under-counts at inside corners without explicit policy.
+
+**Decision:** Add `CornerAllowancePolicy.totalCornerAllowanceMm`; default quick mode **80 mm** (4 × 20 mm). Applied to `adjustedWallWidthMm` before strip count. Not embedded in wall dimensions.
+
+**Why:** Conservative, explainable, adjustable without formula hacks.
+
+**Consequences:** Trace exposes corner allowance for UI copy. Exact-boundary tests use `ZERO_CORNER_POLICY`.
+
+---
+
+## 2026-08-18 — Uniform wall heights only in Phase 2.1 engine
+
+**Status:** Accepted
+
+**Context:** Silent `max(height)` across arbitrary `Wall[]` produced incorrect results for mixed-height inputs.
+
+**Decision:** Reject differing heights with `UNSUPPORTED_DIFFERENT_WALL_HEIGHTS`. Quick mode still works (normalizer sets uniform height).
+
+**Why:** Safe failure beats silent wrong roll count until per-wall planner exists.
+
+**Consequences:** Phase 4 per-wall layout required before mixed-height precise mode.
+
+---
+
+## 2026-08-18 — Safe integer canonical millimeters (Phase 2.1)
+
+**Status:** Accepted
+
+**Context:** Product spec declares integer mm; runtime accepted floats and non-safe integers.
+
+**Decision:** All canonical length inputs must pass `Number.isSafeInteger()` at domain boundary. Trim allows `>= 0`; walls/roll require `> 0`.
+
+**Why:** Prevents drift and matches spec; UI adapter must round before calling domain.
+
+**Consequences:** Fractional meter inputs from UI must be converted/rounded in adapter layer.

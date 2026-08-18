@@ -7,9 +7,8 @@ import {
   View,
 } from 'react-native'
 import { ScreenContainer } from '@/components/screen-container'
-import { appConfig } from '@/config/app-config'
-import { calculateQuickWallpaperRolls } from '@/domain/wallpaper'
-import { formatNumber, formatSquareMetersFromMm, t } from '@/i18n'
+import { calculateQuickWallpaper } from '@/domain/wallpaper'
+import { formatNumber, t } from '@/i18n'
 import { getAnalyticsService } from '@/services'
 import { colors, radii, spacing, typography } from '@/theme'
 import { centimetersToMillimeters } from '@/units'
@@ -37,8 +36,8 @@ export function WallpaperCalculatorScreen() {
   const [roomHeightCm, setRoomHeightCm] = useState(String(DEFAULT_ROOM.heightCm))
   const [rollWidthCm, setRollWidthCm] = useState(String(DEFAULT_ROLL.widthCm))
   const [rollLengthCm, setRollLengthCm] = useState(String(DEFAULT_ROLL.lengthCm))
-  const [rollsRequired, setRollsRequired] = useState<number | null>(null)
-  const [wallAreaMm2, setWallAreaMm2] = useState<number | null>(null)
+  const [minimumRolls, setMinimumRolls] = useState<number | null>(null)
+  const [requiredStrips, setRequiredStrips] = useState<number | null>(null)
 
   const canCalculate = useMemo(() => {
     return [
@@ -59,7 +58,7 @@ export function WallpaperCalculatorScreen() {
   const handleCalculate = () => {
     getAnalyticsService().track({ name: 'calculation_start' })
 
-    const outcome = calculateQuickWallpaperRolls({
+    const outcome = calculateQuickWallpaper({
       room: {
         widthMm: centimetersToMillimeters(Number(roomWidthCm)),
         lengthMm: centimetersToMillimeters(Number(roomLengthCm)),
@@ -69,21 +68,20 @@ export function WallpaperCalculatorScreen() {
         widthMm: centimetersToMillimeters(Number(rollWidthCm)),
         lengthMm: centimetersToMillimeters(Number(rollLengthCm)),
       },
-      wastePercent: appConfig.defaultWastePercent,
     })
 
     if (!outcome.ok) {
-      setRollsRequired(null)
-      setWallAreaMm2(null)
+      setMinimumRolls(null)
+      setRequiredStrips(null)
       return
     }
 
-    setRollsRequired(outcome.result.rollsRequired)
-    setWallAreaMm2(outcome.result.wallAreaMm2)
+    setMinimumRolls(outcome.result.minimumRolls)
+    setRequiredStrips(outcome.result.requiredStrips)
 
     getAnalyticsService().track({
       name: 'calculation_complete',
-      params: { rolls: outcome.result.rollsRequired },
+      params: { rolls: outcome.result.minimumRolls },
     })
     getAnalyticsService().track({ name: 'result_view' })
   }
@@ -139,15 +137,12 @@ export function WallpaperCalculatorScreen() {
         <Text style={styles.buttonLabel}>{strings.wallpaper.calculate}</Text>
       </Pressable>
 
-      {rollsRequired !== null && wallAreaMm2 !== null ? (
+      {minimumRolls !== null && requiredStrips !== null ? (
         <View style={styles.resultCard} accessibilityLiveRegion="polite">
           <Text style={styles.resultTitle}>{strings.wallpaper.resultRolls}</Text>
-          <Text style={styles.resultValue}>{formatNumber(rollsRequired)}</Text>
+          <Text style={styles.resultValue}>{formatNumber(minimumRolls)}</Text>
           <Text style={styles.resultMeta}>
-            {strings.wallpaper.resultArea}: {formatSquareMetersFromMm(wallAreaMm2)}
-          </Text>
-          <Text style={styles.resultMeta}>
-            {strings.wallpaper.resultWithWaste}: {appConfig.defaultWastePercent}%
+            {strings.wallpaper.resultStrips}: {formatNumber(requiredStrips)}
           </Text>
         </View>
       ) : null}

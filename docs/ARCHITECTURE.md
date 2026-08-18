@@ -40,6 +40,8 @@
 - No React, Expo, ads, analytics, or UI imports
 - Unit tests live next to domain code
 - Canonical length: **millimeters**; area: **square millimeters**
+- **Strip-based** roll count (not area-based); see `docs/WALLPAPER_PRODUCT_SPEC.md`
+- Quick mode: `QuickRoomInput` → `Wall[]` → `calculateWallpaper()`
 
 ### Advertising (`src/services/ads/`)
 

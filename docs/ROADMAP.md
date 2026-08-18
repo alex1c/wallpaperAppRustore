@@ -14,7 +14,7 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Placeholder wallpaper domain + minimal UI
 - Jest, ESLint, typecheck scripts
 
-## Phase 1.5 — Android dev environment (current)
+## Phase 1.5 — Android dev environment ✅
 
 - Git baseline
 - JDK 17 + ANDROID_HOME session setup
@@ -22,16 +22,19 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Gradle `assembleDebug` verification
 - Emulator/device optional
 
-## Phase 2 — Wallpaper calculation engine
+## Phase 2 — Wallpaper calculation engine ✅
 
-- Full mathematical model (quick + precise foundations)
-- Pattern repeat, waste rules, openings (spec-driven)
-- Exhaustive unit tests vs reference scenarios
+- Product spec: `docs/WALLPAPER_PRODUCT_SPEC.md`
+- Strip-based pure TypeScript engine (quick mode + shared core)
+- Straight pattern repeat; half-drop and openings deferred
+- Reference scenario tests; recommendation policy separate from minimum rolls
+- Phase 2.1 remediation + Codex re-audit cleanup complete
 
-## Phase 3 — Wallpaper MVP UX
+## Phase 3 — Wallpaper MVP UX (next)
 
 - Quick calculation flow polished for RuStore
 - Result screen, input validation UX, error states
+- **Presenter qualification:** when `trace.patternPhase.minimumRollsDependsOnPhaseAssumption === true`, result UI must explain that minimum rolls assume each new roll starts at a compatible pattern phase (human-first copy via i18n)
 
 ## Phase 4 — Precise calculation
 
@@ -72,4 +75,4 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ---
 
-**Current focus:** complete Phase 1.5 Android environment, then start Phase 2.
+**Current focus:** commit Phase 2 baseline, then start Phase 3 UX.

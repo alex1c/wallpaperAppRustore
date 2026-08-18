@@ -17,7 +17,7 @@ export const ru: TranslationTree = {
   wallpaper: {
     heading: 'Быстрый расчёт',
     placeholderNote:
-      'Это демонстрационный расчёт для проверки архитектуры. Полная формула будет в Phase 2.',
+      'Демонстрационный расчёт по полотнам (Phase 2). Без учёта рисунка — см. «Сделать точнее» в Phase 3.',
     roomWidth: 'Ширина комнаты',
     roomLength: 'Длина комнаты',
     roomHeight: 'Высота комнаты',
@@ -25,7 +25,8 @@ export const ru: TranslationTree = {
     rollLength: 'Длина рулона',
     unitCm: 'см',
     calculate: 'Рассчитать',
-    resultRolls: 'Нужно рулонов',
+    resultRolls: 'Нужно рулонов (минимум)',
+    resultStrips: 'Полотен',
     resultArea: 'Площадь стен',
     resultWithWaste: 'С учётом запаса',
   },
