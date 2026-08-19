@@ -319,3 +319,45 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Prevents drift and matches spec; UI adapter must round before calling domain.
 
 **Consequences:** Fractional meter inputs from UI must be converted/rounded in adapter layer.
+
+---
+
+## 2026-08-19 — UI meter input rounding to integer mm (Phase 3)
+
+**Status:** Accepted
+
+**Context:** RU users enter room dimensions in meters with comma decimals; domain requires integer mm.
+
+**Decision:** `parseMetersInputToMillimeters()` normalizes comma/dot, parses to finite number, then `Math.round(meters * 1000)`. Extra decimal precision beyond 3 places is rounded silently to the nearest mm.
+
+**Why:** Predictable conversion at the UI boundary; no fractional mm in domain.
+
+**Consequences:** Documented in `src/units/parse-decimal-input.ts`; unit tests cover comma, dot, and rounding.
+
+---
+
+## 2026-08-19 — Wallpaper result presenter layer (Phase 3)
+
+**Status:** Accepted
+
+**Context:** Phase 2 trace is developer-oriented; UI needs human copy without duplicating formulas.
+
+**Decision:** `src/features/wallpaper/presenter/` builds localized UI models from domain results and `WallpaperCalculationTrace` only. Minimum rolls and strip counts pass through unchanged.
+
+**Why:** Keeps calculation engine pure; explanation stays explainable and testable without React.
+
+**Consequences:** i18n templates use `{placeholder}` interpolation; domain error codes map to user messages in presenter.
+
+---
+
+## 2026-08-19 — Roll presets as UI config (Phase 3)
+
+**Status:** Accepted
+
+**Context:** Quick Mode needs popular roll sizes without hardcoding in the calculation engine.
+
+**Decision:** Presets live in `src/config/wallpaper-roll-presets.ts`; selecting a preset injects canonical mm into domain input.
+
+**Why:** Separates product UX defaults from domain math.
+
+**Consequences:** Custom roll size uses the same meter input adapter as room dimensions.

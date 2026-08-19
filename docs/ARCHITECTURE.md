@@ -17,8 +17,8 @@
              │                               │
              ▼                               ▼
 ┌────────────────────────┐      ┌──────────────────────────┐
-│  i18n + units (UI side) │      │  AdService / Analytics   │
-│  format & convert input │      │  PersistenceService      │
+│  Presenter + i18n +    │      │  AdService / Analytics   │
+│  units (parse/format)  │      │  PersistenceService      │
 └────────────┬───────────┘      └────────────┬─────────────┘
              │ validated canonical values     │ interfaces only
              ▼                               ▼
@@ -31,6 +31,18 @@
 │  Future: Yandex Ads, AppMetrica, AsyncStorage/SQLite    │
 └─────────────────────────────────────────────────────────┘
 ```
+
+### Presenter layer (`src/features/wallpaper/presenter/`)
+
+- Maps domain results and trace data to localized UI models
+- Formats mm → m/cm for display; builds explanation steps
+- Maps domain error codes to i18n keys — never exposes raw `error.message`
+- Does **not** recalculate rolls, strips, or pattern math
+
+### Input adapter (`src/units/parse-decimal-input.ts`)
+
+- Parses locale decimal strings (comma or dot) to integer millimeters
+- Used by Quick Mode form before calling `calculateQuickWallpaper()`
 
 ## Boundaries
 
@@ -80,8 +92,8 @@ Future: `@react-native-async-storage/async-storage` or similar without UI change
 
 | Route | Screen |
 |-------|--------|
-| `/` | Home — platform intro, link to calculator |
-| `/wallpaper` | Wallpaper calculator placeholder (quick mode demo) |
+| `/` | Wallpaper calculator — Quick Mode MVP (Phase 3) |
+| `/wallpaper` | Legacy redirect to `/` |
 
 ## Native SDK plan (deferred)
 

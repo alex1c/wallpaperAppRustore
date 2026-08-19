@@ -30,13 +30,16 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Reference scenario tests; recommendation policy separate from minimum rolls
 - Phase 2.1 remediation + Codex re-audit cleanup complete
 
-## Phase 3 — Wallpaper MVP UX (next)
+## Phase 3 — Wallpaper MVP UX (current)
 
 - Quick calculation flow polished for RuStore
-- Result screen, input validation UX, error states
-- **Presenter qualification:** when `trace.patternPhase.minimumRollsDependsOnPhaseAssumption === true`, result UI must explain that minimum rolls assume each new roll starts at a compatible pattern phase (human-first copy via i18n)
+- User input adapter: locale decimal → integer mm
+- Result presenter from `WallpaperCalculationTrace`
+- Result screen, field validation UX, human-readable errors
+- Expandable “How we calculated” explanation
+- **Presenter qualification:** when `trace.patternPhase.minimumRollsDependsOnPhaseAssumption === true`, result UI explains pattern phase assumption (human-first copy via i18n)
 
-## Phase 4 — Precise calculation
+## Phase 4 — Precise calculation (next)
 
 - Per-wall mode, rapport, half-drop, cut visualization
 - Doors/windows, roll cut planning
@@ -75,4 +78,4 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ---
 
-**Current focus:** commit Phase 2 baseline, then start Phase 3 UX.
+**Current focus:** Phase 3 Quick Mode MVP UX on top of committed Phase 2 engine.

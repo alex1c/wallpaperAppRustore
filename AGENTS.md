@@ -11,11 +11,11 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 2 — Wallpaper calculation engine** (complete, pending commit)
+**Phase 3 — Wallpaper MVP UX** (in progress)
 
-Phase 2.1 remediation accepted by re-audit. Minimal cleanup done; ready for baseline commit.
+Phase 2 calculation engine committed at `624b053`. Quick Mode UX, input adapter, result presenter, and explanation flow.
 
-**Do NOT implement Phase 3+ scope** (polished MVP UX, production ads, AppMetrica, RuStore release).
+**Do NOT implement Phase 4+ scope** (precise mode, doors/windows, half-drop, production ads, AppMetrica, RuStore release).
 
 ## Tech stack (pinned at project creation)
 

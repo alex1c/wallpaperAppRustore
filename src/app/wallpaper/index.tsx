@@ -1,6 +1,6 @@
-import { WallpaperCalculatorScreen } from '@/features/wallpaper/wallpaper-calculator-screen'
+import { Redirect } from 'expo-router'
 
-/** Expo Router route for the wallpaper calculator feature. */
-export default function WallpaperRoute() {
-  return <WallpaperCalculatorScreen />
+/** Legacy wallpaper route — redirect to root calculator. */
+export default function WallpaperRedirectRoute() {
+  return <Redirect href="/" />
 }

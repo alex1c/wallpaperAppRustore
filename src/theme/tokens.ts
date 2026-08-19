@@ -12,6 +12,7 @@ export const colors = {
   accentPressed: '#1D4ED8',
   success: '#15803D',
   warning: '#B45309',
+  error: '#DC2626',
 } as const
 
 export const spacing = {

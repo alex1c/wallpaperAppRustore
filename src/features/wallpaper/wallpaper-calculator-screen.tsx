@@ -1,83 +1,197 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native'
 import { ScreenContainer } from '@/components/screen-container'
-import { calculateQuickWallpaper } from '@/domain/wallpaper'
-import { formatNumber, t } from '@/i18n'
+import type { WallpaperRollPresetId } from '@/config/wallpaper-roll-presets'
+import {
+  calculateQuickWallpaper,
+  recommendRollPurchaseFromResult,
+} from '@/domain/wallpaper'
+import { CalculationResult } from '@/features/wallpaper/components/calculation-result'
+import { DimensionField } from '@/features/wallpaper/components/dimension-field'
+import { InfoSheet } from '@/features/wallpaper/components/info-sheet'
+import { PreciseEntryCard } from '@/features/wallpaper/components/precise-entry-card'
+import { RollPresetSelector } from '@/features/wallpaper/components/roll-preset-selector'
+import {
+  DEFAULT_QUICK_FORM_VALUES,
+  parseQuickCalculationForm,
+  QUICK_FORM_FIELD_ORDER,
+  type QuickFormFieldErrors,
+  type QuickFormFieldKey,
+} from '@/features/wallpaper/input/parse-quick-form'
+import {
+  mapDomainErrorToMessageKey,
+  presentWallpaperQuickResult,
+  type PresentedWallpaperResult,
+} from '@/features/wallpaper/presenter'
+import { getLocale, t } from '@/i18n'
 import { getAnalyticsService } from '@/services'
 import { colors, radii, spacing, typography } from '@/theme'
-import { centimetersToMillimeters } from '@/units'
-
-/** Demo defaults roughly matching a typical Russian room and roll. */
-const DEFAULT_ROOM = {
-  widthCm: 400,
-  lengthCm: 500,
-  heightCm: 270,
-}
-
-const DEFAULT_ROLL = {
-  widthCm: 53,
-  lengthCm: 1000,
-}
+import type { ParseDecimalInputErrorCode } from '@/units/parse-decimal-input'
 
 /**
- * Foundation wallpaper calculator screen — quick mode placeholder only.
- * Full UX and precise mode arrive in Phases 3–4.
+ * Phase 3 Quick Mode — room input, roll presets, result, and explanation.
+ * Domain math stays in `src/domain/wallpaper`; this screen orchestrates UX only.
  */
 export function WallpaperCalculatorScreen() {
   const strings = t()
-  const [roomWidthCm, setRoomWidthCm] = useState(String(DEFAULT_ROOM.widthCm))
-  const [roomLengthCm, setRoomLengthCm] = useState(String(DEFAULT_ROOM.lengthCm))
-  const [roomHeightCm, setRoomHeightCm] = useState(String(DEFAULT_ROOM.heightCm))
-  const [rollWidthCm, setRollWidthCm] = useState(String(DEFAULT_ROLL.widthCm))
-  const [rollLengthCm, setRollLengthCm] = useState(String(DEFAULT_ROLL.lengthCm))
-  const [minimumRolls, setMinimumRolls] = useState<number | null>(null)
-  const [requiredStrips, setRequiredStrips] = useState<number | null>(null)
+  const locale = getLocale()
 
-  const canCalculate = useMemo(() => {
-    return [
-      roomWidthCm,
-      roomLengthCm,
-      roomHeightCm,
-      rollWidthCm,
-      rollLengthCm,
-    ].every((value) => value.trim().length > 0)
+  const [formValues, setFormValues] = useState(DEFAULT_QUICK_FORM_VALUES)
+  const [fieldErrors, setFieldErrors] = useState<QuickFormFieldErrors>({})
+  const [domainErrorMessage, setDomainErrorMessage] = useState<string | null>(null)
+  const [presentedResult, setPresentedResult] = useState<PresentedWallpaperResult | null>(null)
+  const [explanationExpanded, setExplanationExpanded] = useState(false)
+  const [infoSheetVisible, setInfoSheetVisible] = useState(false)
+  const [resultScrollY, setResultScrollY] = useState(0)
+
+  const scrollRef = useRef<ScrollView>(null)
+  const fieldRefs = useRef<Partial<Record<QuickFormFieldKey, TextInput | null>>>({})
+
+  const registerFieldRef = useCallback(
+    (key: QuickFormFieldKey) => (ref: TextInput | null) => {
+      fieldRefs.current[key] = ref
+    },
+    [],
+  )
+
+  useEffect(() => {
+    if (presentedResult && resultScrollY > 0) {
+      scrollRef.current?.scrollTo({ animated: true, y: resultScrollY })
+    }
+  }, [presentedResult, resultScrollY])
+
+  const updateField = useCallback((key: keyof typeof formValues, value: string) => {
+    setFormValues((current) => ({ ...current, [key]: value }))
+    setPresentedResult(null)
+    setExplanationExpanded(false)
+    setFieldErrors((current) => {
+      if (!(key in current)) {
+        return current
+      }
+
+      const next = { ...current }
+      delete next[key as QuickFormFieldKey]
+      return next
+    })
+    setDomainErrorMessage(null)
   }, [
-    roomHeightCm,
-    roomLengthCm,
-    roomWidthCm,
-    rollLengthCm,
-    rollWidthCm,
+    setDomainErrorMessage,
+    setExplanationExpanded,
+    setFieldErrors,
+    setFormValues,
+    setPresentedResult,
   ])
 
-  const handleCalculate = () => {
-    getAnalyticsService().track({ name: 'calculation_start' })
-
-    const outcome = calculateQuickWallpaper({
-      room: {
-        widthMm: centimetersToMillimeters(Number(roomWidthCm)),
-        lengthMm: centimetersToMillimeters(Number(roomLengthCm)),
-        heightMm: centimetersToMillimeters(Number(roomHeightCm)),
-      },
-      roll: {
-        widthMm: centimetersToMillimeters(Number(rollWidthCm)),
-        lengthMm: centimetersToMillimeters(Number(rollLengthCm)),
-      },
+  const handlePresetSelect = useCallback((presetId: WallpaperRollPresetId) => {
+    setFormValues((current) => ({ ...current, rollPresetId: presetId }))
+    setPresentedResult(null)
+    setExplanationExpanded(false)
+    setDomainErrorMessage(null)
+    setFieldErrors((current) => {
+      const next = { ...current }
+      delete next.rollWidth
+      delete next.rollLength
+      return next
     })
+  }, [
+    setDomainErrorMessage,
+    setExplanationExpanded,
+    setFieldErrors,
+    setFormValues,
+    setPresentedResult,
+  ])
 
-    if (!outcome.ok) {
-      setMinimumRolls(null)
-      setRequiredStrips(null)
+  const resolveFieldErrorMessage = (
+    code: ParseDecimalInputErrorCode,
+    fieldKey: QuickFormFieldKey,
+  ): string => {
+    const fieldStrings = strings.wallpaper.errors.field
+
+    if (fieldKey === 'rollWidth' && code === 'INVALID_FORMAT') {
+      return fieldStrings.invalidCmFormat
+    }
+
+    switch (code) {
+      case 'EMPTY':
+        return fieldStrings.empty
+      case 'INVALID_FORMAT':
+        return fieldStrings.invalidFormat
+      case 'NOT_POSITIVE':
+        return fieldStrings.notPositive
+      case 'NOT_FINITE':
+        return fieldStrings.notFinite
+      case 'TOO_LARGE':
+        return fieldStrings.tooLarge
+      default:
+        return fieldStrings.invalidFormat
+    }
+  }
+
+  const focusFirstInvalidField = (errors: QuickFormFieldErrors) => {
+    const firstKey = QUICK_FORM_FIELD_ORDER.find((key) => errors[key])
+
+    if (!firstKey) {
       return
     }
 
-    setMinimumRolls(outcome.result.minimumRolls)
-    setRequiredStrips(outcome.result.requiredStrips)
+    fieldRefs.current[firstKey]?.focus()
+  }
+
+  const handleCalculate = () => {
+    Keyboard.dismiss()
+    setDomainErrorMessage(null)
+    setPresentedResult(null)
+    setExplanationExpanded(false)
+
+    const parsed = parseQuickCalculationForm(formValues)
+
+    if (!parsed.ok) {
+      if (parsed.fieldErrors) {
+        setFieldErrors(parsed.fieldErrors)
+        focusFirstInvalidField(parsed.fieldErrors)
+        return
+      }
+
+      setDomainErrorMessage(strings.wallpaper.errors.general)
+      return
+    }
+
+    setFieldErrors({})
+    getAnalyticsService().track({ name: 'calculation_start' })
+
+    const outcome = calculateQuickWallpaper(parsed.input)
+
+    if (!outcome.ok) {
+      const messageKey = mapDomainErrorToMessageKey(outcome.error.code)
+      setDomainErrorMessage(strings.wallpaper.errors.domain[messageKey])
+      return
+    }
+
+    const recommendation = recommendRollPurchaseFromResult(outcome.result)
+
+    if (!recommendation.ok) {
+      const messageKey = mapDomainErrorToMessageKey(recommendation.error.code)
+      setDomainErrorMessage(strings.wallpaper.errors.domain[messageKey])
+      return
+    }
+
+    const presented = presentWallpaperQuickResult(
+      outcome.result,
+      recommendation.result,
+      locale,
+    )
+
+    setPresentedResult(presented)
 
     getAnalyticsService().track({
       name: 'calculation_complete',
@@ -86,176 +200,200 @@ export function WallpaperCalculatorScreen() {
     getAnalyticsService().track({ name: 'result_view' })
   }
 
+  const showCustomRollFields = formValues.rollPresetId === 'custom'
+
   return (
-    <ScreenContainer scroll>
-      <Text style={styles.heading} accessibilityRole="header">
-        {strings.wallpaper.heading}
-      </Text>
-      <Text style={styles.note}>{strings.wallpaper.placeholderNote}</Text>
+    <>
+      <ScreenContainer scroll={false}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+          style={styles.flex}
+        >
+          <ScrollView
+            ref={scrollRef}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            onScrollBeginDrag={Keyboard.dismiss}
+          >
+            <Text accessibilityRole="header" style={styles.heading}>
+              {strings.app.title}
+            </Text>
+            <Text style={styles.intro}>{strings.wallpaper.intro}</Text>
 
-      <DimensionField
-        label={strings.wallpaper.roomWidth}
-        unit={strings.wallpaper.unitCm}
-        value={roomWidthCm}
-        onChangeText={setRoomWidthCm}
-      />
-      <DimensionField
-        label={strings.wallpaper.roomLength}
-        unit={strings.wallpaper.unitCm}
-        value={roomLengthCm}
-        onChangeText={setRoomLengthCm}
-      />
-      <DimensionField
-        label={strings.wallpaper.roomHeight}
-        unit={strings.wallpaper.unitCm}
-        value={roomHeightCm}
-        onChangeText={setRoomHeightCm}
-      />
-      <DimensionField
-        label={strings.wallpaper.rollWidth}
-        unit={strings.wallpaper.unitCm}
-        value={rollWidthCm}
-        onChangeText={setRollWidthCm}
-      />
-      <DimensionField
-        label={strings.wallpaper.rollLength}
-        unit={strings.wallpaper.unitCm}
-        value={rollLengthCm}
-        onChangeText={setRollLengthCm}
-      />
+            <Text style={styles.sectionTitle}>{strings.wallpaper.sections.roomSize}</Text>
 
-      <Pressable
-        accessibilityRole="button"
-        disabled={!canCalculate}
-        onPress={handleCalculate}
-        style={({ pressed }) => [
-          styles.button,
-          !canCalculate && styles.buttonDisabled,
-          pressed && canCalculate && styles.buttonPressed,
-        ]}
-      >
-        <Text style={styles.buttonLabel}>{strings.wallpaper.calculate}</Text>
-      </Pressable>
+            <DimensionField
+              errorMessage={
+                fieldErrors.roomLength
+                  ? resolveFieldErrorMessage(fieldErrors.roomLength, 'roomLength')
+                  : undefined
+              }
+              label={strings.wallpaper.fields.length}
+              onChangeText={(value) => updateField('roomLength', value)}
+              onInputRef={registerFieldRef('roomLength')}
+              unit={strings.wallpaper.units.meters}
+              value={formValues.roomLength}
+            />
+            <DimensionField
+              errorMessage={
+                fieldErrors.roomWidth
+                  ? resolveFieldErrorMessage(fieldErrors.roomWidth, 'roomWidth')
+                  : undefined
+              }
+              label={strings.wallpaper.fields.width}
+              onChangeText={(value) => updateField('roomWidth', value)}
+              onInputRef={registerFieldRef('roomWidth')}
+              unit={strings.wallpaper.units.meters}
+              value={formValues.roomWidth}
+            />
+            <DimensionField
+              errorMessage={
+                fieldErrors.roomHeight
+                  ? resolveFieldErrorMessage(fieldErrors.roomHeight, 'roomHeight')
+                  : undefined
+              }
+              label={strings.wallpaper.fields.height}
+              onChangeText={(value) => updateField('roomHeight', value)}
+              onInputRef={registerFieldRef('roomHeight')}
+              unit={strings.wallpaper.units.meters}
+              value={formValues.roomHeight}
+            />
 
-      {minimumRolls !== null && requiredStrips !== null ? (
-        <View style={styles.resultCard} accessibilityLiveRegion="polite">
-          <Text style={styles.resultTitle}>{strings.wallpaper.resultRolls}</Text>
-          <Text style={styles.resultValue}>{formatNumber(minimumRolls)}</Text>
-          <Text style={styles.resultMeta}>
-            {strings.wallpaper.resultStrips}: {formatNumber(requiredStrips)}
-          </Text>
-        </View>
-      ) : null}
-    </ScreenContainer>
-  )
-}
+            <Text style={styles.sectionTitle}>{strings.wallpaper.sections.rollSize}</Text>
 
-interface DimensionFieldProps {
-  label: string
-  unit: string
-  value: string
-  onChangeText: (value: string) => void
-}
+            <RollPresetSelector
+              onSelect={handlePresetSelect}
+              selectedId={formValues.rollPresetId}
+            />
 
-/** Labeled numeric input with unit suffix — UI converts cm to domain mm on submit. */
-function DimensionField({
-  label,
-  unit,
-  value,
-  onChangeText,
-}: DimensionFieldProps) {
-  return (
-    <View style={styles.field}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      <View style={styles.inputRow}>
-        <TextInput
-          accessibilityLabel={label}
-          keyboardType="decimal-pad"
-          onChangeText={onChangeText}
-          style={styles.input}
-          value={value}
-        />
-        <Text style={styles.unit}>{unit}</Text>
-      </View>
-    </View>
+            {showCustomRollFields ? (
+              <View style={styles.customRollFields}>
+                <DimensionField
+                  errorMessage={
+                    fieldErrors.rollWidth
+                      ? resolveFieldErrorMessage(fieldErrors.rollWidth, 'rollWidth')
+                      : undefined
+                  }
+                  label={strings.wallpaper.fields.rollWidth}
+                  onChangeText={(value) => updateField('rollWidth', value)}
+                  onInputRef={registerFieldRef('rollWidth')}
+                  unit={strings.wallpaper.units.centimeters}
+                  value={formValues.rollWidth}
+                />
+                <DimensionField
+                  errorMessage={
+                    fieldErrors.rollLength
+                      ? resolveFieldErrorMessage(fieldErrors.rollLength, 'rollLength')
+                      : undefined
+                  }
+                  label={strings.wallpaper.fields.rollLength}
+                  onChangeText={(value) => updateField('rollLength', value)}
+                  onInputRef={registerFieldRef('rollLength')}
+                  unit={strings.wallpaper.units.meters}
+                  value={formValues.rollLength}
+                />
+              </View>
+            ) : null}
+
+            {domainErrorMessage ? (
+              <Text accessibilityRole="alert" style={styles.domainError}>
+                {domainErrorMessage}
+              </Text>
+            ) : null}
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleCalculate}
+              style={({ pressed }) => [
+                styles.calculateButton,
+                pressed && styles.calculateButtonPressed,
+              ]}
+            >
+              <Text style={styles.calculateButtonLabel}>
+                {strings.wallpaper.calculate}
+              </Text>
+            </Pressable>
+
+            {presentedResult ? (
+              <View
+                onLayout={(event) => {
+                  setResultScrollY(event.nativeEvent.layout.y)
+                }}
+              >
+                <CalculationResult
+                  explanationExpanded={explanationExpanded}
+                  onToggleExplanation={() => setExplanationExpanded((value) => !value)}
+                  result={presentedResult}
+                />
+              </View>
+            ) : null}
+
+            <PreciseEntryCard onPress={() => setInfoSheetVisible(true)} />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </ScreenContainer>
+
+      <InfoSheet
+        onClose={() => setInfoSheetVisible(false)}
+        visible={infoSheetVisible}
+      />
+    </>
   )
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: spacing.xl,
+  },
   heading: {
     ...typography.title,
     color: colors.textPrimary,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
   },
-  note: {
-    ...typography.caption,
+  intro: {
+    ...typography.body,
     color: colors.textSecondary,
     marginBottom: spacing.lg,
   },
-  field: {
-    marginBottom: spacing.md,
-  },
-  fieldLabel: {
+  sectionTitle: {
     ...typography.subtitle,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    paddingHorizontal: spacing.md,
-  },
-  input: {
-    flex: 1,
-    ...typography.body,
-    color: colors.textPrimary,
-    paddingVertical: spacing.sm,
-  },
-  unit: {
-    ...typography.caption,
     color: colors.textSecondary,
-    marginLeft: spacing.sm,
+    letterSpacing: 0.5,
+    marginBottom: spacing.sm,
+    marginTop: spacing.sm,
+    textTransform: 'uppercase',
   },
-  button: {
+  customRollFields: {
+    marginTop: spacing.md,
+  },
+  domainError: {
+    ...typography.body,
+    backgroundColor: '#FEE2E2',
+    borderRadius: radii.md,
+    color: colors.error,
+    marginBottom: spacing.sm,
+    marginTop: spacing.sm,
+    padding: spacing.md,
+  },
+  calculateButton: {
     alignItems: 'center',
     backgroundColor: colors.accent,
     borderRadius: radii.md,
-    marginTop: spacing.sm,
+    marginTop: spacing.md,
+    minHeight: 52,
+    justifyContent: 'center',
     paddingVertical: spacing.md,
   },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  buttonPressed: {
+  calculateButtonPressed: {
     backgroundColor: colors.accentPressed,
   },
-  buttonLabel: {
+  calculateButtonLabel: {
     ...typography.subtitle,
     color: '#FFFFFF',
-  },
-  resultCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    marginTop: spacing.lg,
-    padding: spacing.md,
-  },
-  resultTitle: {
-    ...typography.subtitle,
-    color: colors.textSecondary,
-  },
-  resultValue: {
-    ...typography.title,
-    color: colors.success,
-    marginVertical: spacing.xs,
-  },
-  resultMeta: {
-    ...typography.body,
-    color: colors.textPrimary,
   },
 })
