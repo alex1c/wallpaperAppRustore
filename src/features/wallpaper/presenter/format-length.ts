@@ -36,7 +36,7 @@ export function formatCentimetersFromMm(
 ): string {
   const centimeters = valueMm / 10
   const formatted = new Intl.NumberFormat(resolveIntlLocale(locale), {
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 1,
   }).format(centimeters)
 
   const unit = locale === 'ru' ? 'см' : 'cm'

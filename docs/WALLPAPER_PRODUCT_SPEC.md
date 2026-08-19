@@ -408,15 +408,25 @@ Same room calculation — no second formula.
 
 ---
 
-## 20. Wallpaper helper (future content)
+## 20. Wallpaper helper (Phase 4A — roll label helper)
 
-Planned in-app help section distinguishing:
+In-app **«Как прочитать этикетку обоев?»** helper (Phase 4A) explains common label notations with examples:
 
-**Needed for calculation:** roll size, repeat, match/offset
+| Example | Meaning |
+|---------|---------|
+| `53 см × 10,05 м` | Roll width × length |
+| `64 см` | Pattern repeat every 64 cm |
+| `64/0` | Straight match (same height on adjacent strips) |
+| `64/32` | 64 cm repeat, adjacent strip offset 32 cm (half-drop) |
+| `0` or free-match symbol | No pattern alignment needed |
 
-**Useful when buying:** batch/lot, washability, light resistance, removal method, symbols
+Copy states that **manufacturers may use slightly different symbols** — helper is illustrative, not an exhaustive international standard.
 
-Not implemented in Phase 2.
+**Needed for calculation:** roll size, repeat (when patterned), match type
+
+**Useful when buying (future):** batch/lot, washability, light resistance, removal method
+
+OCR/camera label scan remains post-MVP (Phase 6+).
 
 ---
 

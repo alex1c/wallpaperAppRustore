@@ -24,6 +24,7 @@ export function RollPresetSelector({
   return (
     <View style={styles.container}>
       <Text style={styles.hint}>{strings.wallpaper.rollPresets.popularSizes}</Text>
+      <Text style={styles.sizeHint}>{strings.wallpaper.rollPresets.sizeHint}</Text>
 
       {WALLPAPER_ROLL_PRESETS.map((preset) => {
         const selected = selectedId === preset.id
@@ -81,6 +82,11 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.textSecondary,
     marginBottom: spacing.xs,
+  },
+  sizeHint: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
   },
   option: {
     alignItems: 'center',

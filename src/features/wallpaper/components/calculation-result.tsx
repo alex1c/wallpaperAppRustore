@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import type { PresentedWallpaperResult } from '@/features/wallpaper/presenter'
+import { t } from '@/i18n'
 import { colors, radii, spacing, typography } from '@/theme'
 import { ExplanationSection } from './explanation-section'
 
@@ -19,6 +20,8 @@ export function CalculationResult({
   explanationExpanded,
   onToggleExplanation,
 }: CalculationResultProps) {
+  const strings = t()
+
   return (
     <View
       key={result.resultKey}
@@ -26,6 +29,10 @@ export function CalculationResult({
       style={styles.container}
     >
       <Text style={styles.minimumHeading}>{result.minimumRollsHeading}</Text>
+
+      {result.patternApplied ? (
+        <Text style={styles.patternBadge}>{strings.wallpaper.result.patternAppliedBadge}</Text>
+      ) : null}
 
       <View style={styles.heroRow}>
         <Text
@@ -74,6 +81,18 @@ const styles = StyleSheet.create({
   minimumHeading: {
     ...typography.subtitle,
     color: colors.textSecondary,
+  },
+  patternBadge: {
+    ...typography.caption,
+    alignSelf: 'flex-start',
+    backgroundColor: colors.background,
+    borderRadius: radii.sm,
+    color: colors.accent,
+    marginBottom: spacing.xs,
+    marginTop: spacing.xs,
+    overflow: 'hidden',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   heroRow: {
     alignItems: 'baseline',

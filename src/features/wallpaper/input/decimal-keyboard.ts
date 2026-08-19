@@ -1,12 +1,12 @@
 import { Platform } from 'react-native'
+import {
+  getDecimalTextInputPropsForPlatform,
+  type DecimalTextInputProps,
+} from '@/features/wallpaper/input/decimal-text-input-props'
 
-/** Keyboard type that allows decimal entry on both Android and iOS. */
-export type DecimalKeyboardType = 'decimal-pad' | 'numeric'
+export type { DecimalTextInputProps, DecimalInputPlatform } from '@/features/wallpaper/input/decimal-text-input-props'
+export { getDecimalTextInputPropsForPlatform } from '@/features/wallpaper/input/decimal-text-input-props'
 
-/**
- * Android `decimal-pad` often lacks comma key in RU locale.
- * `numeric` accepts pasted/transliterated comma input more reliably.
- */
-export function getDecimalKeyboardType(): DecimalKeyboardType {
-  return Platform.OS === 'android' ? 'numeric' : 'decimal-pad'
+export function getDecimalTextInputProps(): DecimalTextInputProps {
+  return getDecimalTextInputPropsForPlatform(Platform.OS)
 }

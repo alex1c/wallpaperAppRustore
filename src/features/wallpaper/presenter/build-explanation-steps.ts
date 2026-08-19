@@ -85,17 +85,48 @@ export function buildExplanationSteps(
   })
   const topTrim = formatCentimetersFromMm(trace.topTrimMm, locale)
   const bottomTrim = formatCentimetersFromMm(trace.bottomTrimMm, locale)
+  const patternApplied = trace.patternMatch === 'straight' && trace.patternRepeatMm !== undefined
 
   steps.push({
     stepNumber: steps.length + 1,
     title: strings.wallpaper.explanation.steps.stripLengthTitle,
-    body: interpolateTemplate(strings.wallpaper.explanation.steps.stripLengthBody, {
-      wallHeight,
-      topTrim,
-      bottomTrim,
-      stripLength,
-    }),
+    body: interpolateTemplate(
+      patternApplied
+        ? strings.wallpaper.explanation.steps.stripLengthWithPatternBody
+        : strings.wallpaper.explanation.steps.stripLengthBody,
+      {
+        wallHeight,
+        topTrim,
+        bottomTrim,
+        stripLength,
+      },
+    ),
   })
+
+  if (patternApplied && trace.patternRepeatMm !== undefined) {
+    const repeatSize = formatCentimetersFromMm(trace.patternRepeatMm, locale)
+    const patternStep = formatMetersFromMm(trace.patternStepMm, locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+    const alignmentGapMm = trace.patternStepMm - trace.rawStripLengthMm
+
+    const patternBodyTemplate = alignmentGapMm > 0
+      ? strings.wallpaper.explanation.steps.patternAlignmentWithGapBody
+      : strings.wallpaper.explanation.steps.patternAlignmentBody
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      title: strings.wallpaper.explanation.steps.patternAlignmentTitle,
+      body: interpolateTemplate(patternBodyTemplate, {
+        repeatSize,
+        patternStep,
+        alignmentGap: alignmentGapMm > 0
+          ? formatCentimetersFromMm(alignmentGapMm as import('@/units').Millimeters, locale)
+          : '',
+      }),
+    })
+  }
 
   const rollLength = formatMetersFromMm(trace.rollLengthMm, locale, {
     minimumFractionDigits: 2,

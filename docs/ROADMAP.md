@@ -30,18 +30,25 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Reference scenario tests; recommendation policy separate from minimum rolls
 - Phase 2.1 remediation + Codex re-audit cleanup complete
 
-## Phase 3 — Wallpaper MVP UX (current)
+## Phase 3 — Wallpaper MVP UX ✅
 
 - Quick calculation flow polished for RuStore
 - User input adapter: locale decimal → integer mm
 - Result presenter from `WallpaperCalculationTrace`
-- Result screen, field validation UX, human-readable errors
 - Expandable “How we calculated” explanation
-- **Presenter qualification:** when `trace.patternPhase.minimumRollsDependsOnPhaseAssumption === true`, result UI explains pattern phase assumption (human-first copy via i18n)
+- Phase 3.1: direct launch, custom roll cm, single pattern entry point
 
-## Phase 4 — Precise calculation (next)
+## Phase 4A — Pattern match & label helper (current)
 
-- Per-wall mode, rapport, half-drop, cut visualization
+- Human-first pattern refinement sheet (straight match via existing domain)
+- Roll label helper (examples, not exhaustive standard)
+- Pattern explanation steps from trace
+- Subtle wallpaper background experiment
+- Half-drop: UI education only — calculation deferred
+
+## Phase 4B — Precise calculation (next)
+
+- Per-wall mode, half-drop calculation, cut visualization
 - Doors/windows, roll cut planning
 - “Already have N rolls — enough?” mode
 
@@ -78,4 +85,4 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ---
 
-**Current focus:** Phase 3 Quick Mode MVP UX on top of committed Phase 2 engine.
+**Current focus:** Phase 4A pattern refinement UX on committed Phase 3 Quick Mode.

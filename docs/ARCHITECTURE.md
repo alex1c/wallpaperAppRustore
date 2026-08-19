@@ -39,10 +39,12 @@
 - Maps domain error codes to i18n keys — never exposes raw `error.message`
 - Does **not** recalculate rolls, strips, or pattern math
 
-### Input adapter (`src/units/parse-decimal-input.ts`)
+### Pattern refinement (`src/features/wallpaper/pattern/`, `parse-pattern-form.ts`)
 
-- Parses locale decimal strings (comma or dot) to integer millimeters
-- Used by Quick Mode form before calling `calculateQuickWallpaper()`
+- Human-first pattern sheet — separate from Quick form
+- Straight match: repeat cm → integer mm → existing domain engine
+- Half-drop: UI + label helper only in Phase 4A; calculation deferred
+- Roll label helper: example notations, not exhaustive international standard
 
 ## Boundaries
 

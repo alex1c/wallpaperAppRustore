@@ -1,4 +1,8 @@
 import {
+  parsePatternForm,
+  withPatternInput,
+} from '@/features/wallpaper/input/parse-pattern-form'
+import {
   calculateQuickWallpaper,
   recommendRollPurchaseFromResult,
 } from '@/domain/wallpaper'
@@ -85,6 +89,29 @@ describe('wallpaper result presenter', () => {
 
     expect(combined).toMatch(/2,70/)
     expect(combined).toMatch(/10,05/)
+  })
+
+  it('shows phase assumption note for straight pattern match', () => {
+    const patternParsed = parsePatternForm({ matchType: 'straight', repeatCm: '64' })
+    expect(patternParsed.ok).toBe(true)
+    if (!patternParsed.ok) return
+
+    const outcome = calculateQuickWallpaper(withPatternInput({
+      room: REFERENCE_ROOM_4X3,
+      roll: REFERENCE_ROLL_WIDE,
+    }, patternParsed.pattern))
+
+    expect(outcome.ok).toBe(true)
+    if (!outcome.ok) return
+
+    const recommendation = recommendRollPurchaseFromResult(outcome.result)
+    expect(recommendation.ok).toBe(true)
+    if (!recommendation.ok) return
+
+    const presented = presentWallpaperQuickResult(outcome.result, recommendation.result, 'ru')
+
+    expect(presented.phaseAssumptionNote).toMatch(/новый рулон/)
+    expect(presented.patternApplied).toBe(true)
   })
 
   it('derives top and bottom trim copy from the calculation trace', () => {

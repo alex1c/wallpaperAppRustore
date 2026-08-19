@@ -11,11 +11,11 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 3 — Wallpaper MVP UX** (in progress)
+**Phase 4A — Pattern match & label helper** (complete, pending commit)
 
-Phase 2 calculation engine committed at `624b053`. Quick Mode UX, input adapter, result presenter, and explanation flow.
+Phase 3 MVP UX committed at `2eb7292`. Phase 4A adds human-first pattern refinement sheet, roll label helper, straight-match UI wired to domain, phase-assumption note, subtle wallpaper background, and expanded explanation steps. Half-drop remains UI-only (deferred calculation).
 
-**Do NOT implement Phase 4+ scope** (precise mode, doors/windows, half-drop, production ads, AppMetrica, RuStore release).
+**Do NOT implement Phase 4B scope** (per-wall, doors/windows, half-drop calculation, persistence, ads, RuStore release).
 
 ## Tech stack (pinned at project creation)
 

@@ -5,10 +5,7 @@ import {
 } from '@/config/wallpaper-roll-presets'
 import type { QuickWallpaperCalculationInput } from '@/domain/wallpaper'
 import type { ParseDecimalInputErrorCode } from '@/units/parse-decimal-input'
-import {
-  parseCentimetersInputToMillimeters,
-  parseMetersInputToMillimeters,
-} from '@/units/parse-decimal-input'
+import { parseMetersInputToMillimeters } from '@/units/parse-decimal-input'
 
 /** Quick Mode form field identifiers for validation error mapping. */
 export type QuickFormFieldKey =
@@ -40,7 +37,7 @@ export const DEFAULT_QUICK_FORM_VALUES: QuickCalculationFormValues = {
   roomWidth: '3',
   roomHeight: '2,7',
   rollPresetId: DEFAULT_WALLPAPER_ROLL_PRESET_ID,
-  rollWidth: '106',
+  rollWidth: '1,06',
   rollLength: '10,05',
 }
 
@@ -72,7 +69,7 @@ export function parseQuickCalculationForm(
   let rollLengthMm = null as import('@/units').Millimeters | null
 
   if (values.rollPresetId === 'custom') {
-    const rollWidth = parseCentimetersInputToMillimeters(values.rollWidth)
+    const rollWidth = parseMetersInputToMillimeters(values.rollWidth)
     if (!rollWidth.ok) {
       fieldErrors.rollWidth = rollWidth.code
     } else {

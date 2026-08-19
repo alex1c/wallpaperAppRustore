@@ -25,6 +25,7 @@ export interface TranslationTree {
     }
     rollPresets: {
       popularSizes: string
+      sizeHint: string
       custom: string
       labels: {
         wide1060: string
@@ -36,10 +37,29 @@ export interface TranslationTree {
       title: string
       subtitle: string
     }
-    preciseSheet: {
+    pattern: {
+      sheetTitle: string
+      sheetIntro: string
+      sectionTitle: string
+      repeatLabel: string
+      repeatHelper: string
+      repeatSecondary: string
+      calculate: string
+      cancel: string
+      halfDropDeferred: string
+      options: {
+        free: { title: string; description: string; hint?: string }
+        straight: { title: string; description: string; hint?: string }
+        'half-drop': { title: string; description: string; hint?: string }
+      }
+    }
+    labelHelper: {
+      link: string
       title: string
-      body: string
+      intro: string
+      disclaimer: string
       close: string
+      entries: readonly { mark: string; meaning: string }[]
     }
     nouns: {
       strip: {
@@ -62,6 +82,7 @@ export interface TranslationTree {
       stripsPerRollPrefix: string
       sparePrefix: string
       totalWithSpare: string
+      patternAppliedBadge: string
     }
     explanation: {
       toggleLabel: string
@@ -77,6 +98,10 @@ export interface TranslationTree {
         stripsBody: string
         stripLengthTitle: string
         stripLengthBody: string
+        stripLengthWithPatternBody: string
+        patternAlignmentTitle: string
+        patternAlignmentBody: string
+        patternAlignmentWithGapBody: string
         stripsPerRollTitle: string
         stripsPerRollBody: string
         rollPlanTitle: string

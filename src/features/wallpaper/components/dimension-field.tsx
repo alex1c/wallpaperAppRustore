@@ -4,7 +4,7 @@ import {
   filterDecimalInputText,
   filterIntegerInputText,
 } from '@/units/decimal-input-text'
-import { getDecimalKeyboardType } from '@/features/wallpaper/input/decimal-keyboard'
+import { getDecimalTextInputProps } from '@/features/wallpaper/input/decimal-keyboard'
 import { colors, radii, spacing, typography } from '@/theme'
 
 export type DimensionInputMode = 'decimal' | 'integer'
@@ -40,6 +40,7 @@ export function DimensionField({
   returnKeyType = 'done',
 }: DimensionFieldProps) {
   const hasError = Boolean(errorMessage)
+  const decimalInputProps = inputMode === 'decimal' ? getDecimalTextInputProps() : null
 
   const handleChangeText = (raw: string) => {
     const editableText = inputMode === 'integer'
@@ -68,9 +69,11 @@ export function DimensionField({
           }}
           accessibilityLabel={label}
           accessibilityHint={errorMessage ? `${unit}. ${errorMessage}` : unit}
-          keyboardType={
-            inputMode === 'integer' ? 'number-pad' : getDecimalKeyboardType()
-          }
+          autoCapitalize="none"
+          autoCorrect={false}
+          {...(inputMode === 'integer'
+            ? { keyboardType: 'number-pad' as const }
+            : decimalInputProps)}
           onChangeText={handleChangeText}
           onSubmitEditing={onSubmitEditing}
           returnKeyType={returnKeyType}

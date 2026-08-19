@@ -361,3 +361,45 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Separates product UX defaults from domain math.
 
 **Consequences:** Custom roll size uses the same meter input adapter as room dimensions.
+
+---
+
+## 2026-08-19 — Human-first pattern terminology (Phase 4A)
+
+**Status:** Accepted
+
+**Context:** Users do not know terms like rapport, straight match, or half-drop.
+
+**Decision:** Primary UI copy uses plain language (“Повтор рисунка”, “Рисунок повторяется одинаково”). Professional terms appear only as secondary hints. Repeat input uses cm → integer mm adapter.
+
+**Why:** RuStore DIY audience; progressive disclosure from Quick Mode.
+
+**Consequences:** Pattern refinement lives in a separate sheet; Quick form unchanged.
+
+---
+
+## 2026-08-19 — Half-drop UI-only in Phase 4A (Phase 4A)
+
+**Status:** Accepted
+
+**Context:** Domain rejects half-drop (`UNSUPPORTED_PATTERN_MATCH`); implementing a fake UI calculation would violate Phase 2 correctness rules.
+
+**Decision:** Half-drop is selectable for education (label helper explains 64/32) but calculation is blocked with honest deferred messaging. No numeric result.
+
+**Why:** Correctness over feature checkbox; half-drop domain research deferred to Phase 4B.
+
+**Consequences:** `parsePatternForm()` returns `halfDropDeferred`; regression tests enforce no false numeric output.
+
+---
+
+## 2026-08-19 — Subtle wallpaper background (Phase 4A experiment)
+
+**Status:** Accepted (experimental)
+
+**Context:** Product idea for decorative wallpaper-like background without harming readability.
+
+**Decision:** Local lightweight diagonal line pattern via `WallpaperBackground` component (`rgba` blue at 4% opacity). Content cards remain opaque white surfaces.
+
+**Why:** No remote assets or new dependencies; easy to remove if manual review fails.
+
+**Consequences:** Applied in `ScreenContainer`; must pass Android readability check.

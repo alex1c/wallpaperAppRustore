@@ -23,6 +23,7 @@ export interface PresentedWallpaperResult {
   explanationSteps: PresentedExplanationStep[]
   phaseAssumptionNote: string | null
   trimHint: string
+  patternApplied: boolean
 }
 
 export interface PresentedRecommendation {
@@ -101,6 +102,7 @@ export function presentWallpaperQuickResult(
     explanationSteps: buildExplanationSteps(trace, locale),
     phaseAssumptionNote,
     trimHint: strings.wallpaper.explanation.trimHint,
+    patternApplied: result.patternApplied,
   }
 }
 

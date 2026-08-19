@@ -18,9 +18,14 @@ import {
 } from '@/domain/wallpaper'
 import { CalculationResult } from '@/features/wallpaper/components/calculation-result'
 import { DimensionField } from '@/features/wallpaper/components/dimension-field'
-import { InfoSheet } from '@/features/wallpaper/components/info-sheet'
+import { PatternRefinementSheet } from '@/features/wallpaper/components/pattern-refinement-sheet'
 import { PreciseEntryCard } from '@/features/wallpaper/components/precise-entry-card'
 import { RollPresetSelector } from '@/features/wallpaper/components/roll-preset-selector'
+import {
+  parsePatternForm,
+  withPatternInput,
+  type PatternFormValues,
+} from '@/features/wallpaper/input/parse-pattern-form'
 import {
   DEFAULT_QUICK_FORM_VALUES,
   parseQuickCalculationForm,
@@ -51,7 +56,7 @@ export function WallpaperCalculatorScreen() {
   const [domainErrorMessage, setDomainErrorMessage] = useState<string | null>(null)
   const [presentedResult, setPresentedResult] = useState<PresentedWallpaperResult | null>(null)
   const [explanationExpanded, setExplanationExpanded] = useState(false)
-  const [infoSheetVisible, setInfoSheetVisible] = useState(false)
+  const [patternSheetVisible, setPatternSheetVisible] = useState(false)
   const [resultScrollY, setResultScrollY] = useState(0)
 
   const scrollRef = useRef<ScrollView>(null)
@@ -118,7 +123,7 @@ export function WallpaperCalculatorScreen() {
     const fieldStrings = strings.wallpaper.errors.field
 
     if (fieldKey === 'rollWidth' && code === 'INVALID_FORMAT') {
-      return fieldStrings.invalidCmFormat
+      return fieldStrings.invalidFormat
     }
 
     switch (code) {
@@ -147,29 +152,12 @@ export function WallpaperCalculatorScreen() {
     fieldRefs.current[firstKey]?.focus()
   }
 
-  const handleCalculate = () => {
-    Keyboard.dismiss()
-    setDomainErrorMessage(null)
-    setPresentedResult(null)
-    setExplanationExpanded(false)
-
-    const parsed = parseQuickCalculationForm(formValues)
-
-    if (!parsed.ok) {
-      if (parsed.fieldErrors) {
-        setFieldErrors(parsed.fieldErrors)
-        focusFirstInvalidField(parsed.fieldErrors)
-        return
-      }
-
-      setDomainErrorMessage(strings.wallpaper.errors.general)
-      return
-    }
-
-    setFieldErrors({})
+  const runCalculation = (
+    parsedInput: import('@/domain/wallpaper').QuickWallpaperCalculationInput,
+  ) => {
     getAnalyticsService().track({ name: 'calculation_start' })
 
-    const outcome = calculateQuickWallpaper(parsed.input)
+    const outcome = calculateQuickWallpaper(parsedInput)
 
     if (!outcome.ok) {
       const messageKey = mapDomainErrorToMessageKey(outcome.error.code)
@@ -199,6 +187,70 @@ export function WallpaperCalculatorScreen() {
     })
     getAnalyticsService().track({ name: 'result_view' })
   }
+
+  const handleCalculate = () => {
+    Keyboard.dismiss()
+    setDomainErrorMessage(null)
+    setPresentedResult(null)
+    setExplanationExpanded(false)
+
+    const parsed = parseQuickCalculationForm(formValues)
+
+    if (!parsed.ok) {
+      if (parsed.fieldErrors) {
+        setFieldErrors(parsed.fieldErrors)
+        focusFirstInvalidField(parsed.fieldErrors)
+        return
+      }
+
+      setDomainErrorMessage(strings.wallpaper.errors.general)
+      return
+    }
+
+    setFieldErrors({})
+    runCalculation(parsed.input)
+  }
+
+  const handlePatternCalculate = (patternValues: PatternFormValues) => {
+    Keyboard.dismiss()
+    setDomainErrorMessage(null)
+    setPresentedResult(null)
+    setExplanationExpanded(false)
+
+    const parsed = parseQuickCalculationForm(formValues)
+
+    if (!parsed.ok) {
+      if (parsed.fieldErrors) {
+        setFieldErrors(parsed.fieldErrors)
+        setPatternSheetVisible(false)
+        focusFirstInvalidField(parsed.fieldErrors)
+        setDomainErrorMessage(strings.wallpaper.errors.general)
+        return
+      }
+
+      setDomainErrorMessage(strings.wallpaper.errors.general)
+      return
+    }
+
+    const patternParsed = parsePatternForm(patternValues)
+
+    if (!patternParsed.ok) {
+      return
+    }
+
+    setFieldErrors({})
+    runCalculation(withPatternInput(parsed.input, patternParsed.pattern))
+  }
+
+  const invalidatePresentedCalculation = useCallback(() => {
+    setPresentedResult(null)
+    setExplanationExpanded(false)
+    setDomainErrorMessage(null)
+  }, [
+    setDomainErrorMessage,
+    setExplanationExpanded,
+    setPresentedResult,
+  ])
 
   const showCustomRollFields = formValues.rollPresetId === 'custom'
 
@@ -278,7 +330,7 @@ export function WallpaperCalculatorScreen() {
                   label={strings.wallpaper.fields.rollWidth}
                   onChangeText={(value) => updateField('rollWidth', value)}
                   onInputRef={registerFieldRef('rollWidth')}
-                  unit={strings.wallpaper.units.centimeters}
+                  unit={strings.wallpaper.units.meters}
                   value={formValues.rollWidth}
                 />
                 <DimensionField
@@ -329,14 +381,16 @@ export function WallpaperCalculatorScreen() {
               </View>
             ) : null}
 
-            <PreciseEntryCard onPress={() => setInfoSheetVisible(true)} />
+            <PreciseEntryCard onPress={() => setPatternSheetVisible(true)} />
           </ScrollView>
         </KeyboardAvoidingView>
       </ScreenContainer>
 
-      <InfoSheet
-        onClose={() => setInfoSheetVisible(false)}
-        visible={infoSheetVisible}
+      <PatternRefinementSheet
+        onCalculate={handlePatternCalculate}
+        onClose={() => setPatternSheetVisible(false)}
+        onDraftChange={invalidatePresentedCalculation}
+        visible={patternSheetVisible}
       />
     </>
   )
@@ -354,6 +408,7 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
+    textAlign: 'center',
   },
   intro: {
     ...typography.body,
