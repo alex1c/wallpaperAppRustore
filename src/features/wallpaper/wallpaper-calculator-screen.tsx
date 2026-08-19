@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native'
+import { useRouter } from 'expo-router'
 import { ScreenContainer } from '@/components/screen-container'
 import type { WallpaperRollPresetId } from '@/config/wallpaper-roll-presets'
 import {
@@ -18,9 +19,12 @@ import {
 } from '@/domain/wallpaper'
 import { CalculationResult } from '@/features/wallpaper/components/calculation-result'
 import { DimensionField } from '@/features/wallpaper/components/dimension-field'
+import { PatternEntryCard } from '@/features/wallpaper/components/pattern-entry-card'
 import { PatternRefinementSheet } from '@/features/wallpaper/components/pattern-refinement-sheet'
 import { PreciseEntryCard } from '@/features/wallpaper/components/precise-entry-card'
 import { RollPresetSelector } from '@/features/wallpaper/components/roll-preset-selector'
+import { buildPreciseDraftFromQuickForm } from '@/features/wallpaper/precise/input/build-precise-draft-from-quick'
+import { setPendingPreciseDraft } from '@/features/wallpaper/precise/state/precise-draft-store'
 import {
   parsePatternForm,
   withPatternInput,
@@ -50,6 +54,7 @@ import type { ParseDecimalInputErrorCode } from '@/units/parse-decimal-input'
 export function WallpaperCalculatorScreen() {
   const strings = t()
   const locale = getLocale()
+  const router = useRouter()
 
   const [formValues, setFormValues] = useState(DEFAULT_QUICK_FORM_VALUES)
   const [fieldErrors, setFieldErrors] = useState<QuickFormFieldErrors>({})
@@ -252,6 +257,11 @@ export function WallpaperCalculatorScreen() {
     setPresentedResult,
   ])
 
+  const handleOpenPreciseMode = () => {
+    setPendingPreciseDraft(buildPreciseDraftFromQuickForm(formValues))
+    router.push('/precise')
+  }
+
   const showCustomRollFields = formValues.rollPresetId === 'custom'
 
   return (
@@ -381,7 +391,8 @@ export function WallpaperCalculatorScreen() {
               </View>
             ) : null}
 
-            <PreciseEntryCard onPress={() => setPatternSheetVisible(true)} />
+            <PatternEntryCard onPress={() => setPatternSheetVisible(true)} />
+            <PreciseEntryCard onPress={handleOpenPreciseMode} />
           </ScrollView>
         </KeyboardAvoidingView>
       </ScreenContainer>

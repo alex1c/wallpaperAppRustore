@@ -8,6 +8,8 @@ export type DomainErrorMessageKey =
   | 'unsupportedFeature'
   | 'inputOverflow'
   | 'invalidInput'
+  | 'openingOutsideWall'
+  | 'overlappingOpenings'
   | 'generic'
 
 /**
@@ -27,6 +29,14 @@ export function mapDomainErrorToMessageKey(
     case 'INCONSISTENT_PATTERN_CONFIG':
     case 'UNSUPPORTED_PATTERN_MATCH':
       return 'invalidPattern'
+    case 'OPENING_OUTSIDE_WALL':
+      return 'openingOutsideWall'
+    case 'OVERLAPPING_OPENINGS_UNSUPPORTED':
+    case 'INVALID_OPENING_GEOMETRY':
+      return 'invalidInput'
+    case 'DUPLICATE_OPENING_ID':
+      return 'invalidInput'
+    case 'UNSUPPORTED_PRECISE_PATTERN_CONFIGURATION':
     case 'UNSUPPORTED_DIFFERENT_WALL_HEIGHTS':
       return 'unsupportedFeature'
     case 'INPUT_OVERFLOW':

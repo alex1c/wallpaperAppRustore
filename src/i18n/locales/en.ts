@@ -35,9 +35,122 @@ export const en: TranslationTree = {
       },
     },
     calculate: 'Calculate',
-    preciseEntry: {
+    patternEntry: {
       title: 'Does the wallpaper have a pattern? Refine →',
       subtitle: 'We will account for pattern repeat from the roll label',
+    },
+    preciseEntry: {
+      title: 'Make the calculation more precise →',
+      subtitle: 'Account for individual walls, doors, and windows',
+    },
+    precise: {
+      screenTitle: 'Precise calculation',
+      back: 'Back',
+      intro: 'Refine wall sizes and add doors or windows if needed.',
+      sections: {
+        walls: 'Walls',
+        openings: 'Doors and windows',
+        wallpaper: 'Wallpaper',
+      },
+      walls: {
+        wallTitle: 'Wall {number}',
+        width: 'Width',
+        height: 'Height',
+        addWall: '+ Add wall',
+        removeWall: 'Remove',
+        removeWallHint: 'Remove this wall from the calculation',
+      },
+      openings: {
+        emptyTitle: 'No doors or windows yet',
+        emptyBody:
+          'Adding their sizes helps estimate wallpaper coverage more accurately.',
+        addDoor: '+ Add door',
+        addWindow: '+ Add window',
+        editDoor: 'Door',
+        editWindow: 'Window',
+        remove: 'Remove',
+        removeHint: 'Remove this opening from the calculation',
+        doorLabel: 'Door',
+        windowLabel: 'Window',
+        onWall: 'On which wall',
+        width: 'Width',
+        height: 'Height',
+        offsetFromLeft: 'From the left edge of the wall',
+        offsetFromLeftHint:
+          'Measure from the left edge of the selected wall to the start of the opening.',
+        offsetFromFloor: 'From the floor',
+        offsetFromFloorHint:
+          'Measure from the floor to the bottom edge of the window.',
+        save: 'Save',
+        cancel: 'Cancel',
+        previewLabel: 'Wall sketch',
+        previewHint: 'Check that the opening is positioned as you measured.',
+      },
+      wallpaper: {
+        rollSummary: 'Roll size',
+        changeRoll: 'Change',
+        rollDone: 'Done',
+        patternSummary: 'Pattern',
+        noPattern: 'No pattern matching',
+        changePattern: 'Change',
+      },
+      calculate: 'Calculate',
+      unsupportedPatternWithOpenings:
+        'Precise calculation with doors and windows is not supported for pattern-matched wallpaper yet. You can calculate walls without openings or run the calculation without pattern matching.',
+      result: {
+        plannedHeading: 'By planned cutting layout',
+        plannedHelper:
+          'This uses a practical conservative cutting plan. Manual offcut optimization may use material more efficiently.',
+        coverageAreaLabel: 'Coverage area',
+        conservativeNote:
+          'We use a conservative cutting plan so material is not underestimated. An experienced installer may reuse offcuts more efficiently.',
+        openingImpactsTitle: 'What openings changed',
+        wallCount: { one: 'wall', few: 'walls', many: 'walls' },
+        doorCount: { one: 'door', few: 'doors', many: 'doors' },
+        windowCount: { one: 'window', few: 'windows', many: 'windows' },
+        openingImpact: {
+          doorOnWall: 'Door on wall {wallNumber}',
+          windowOnWall: 'Window on wall {wallNumber}',
+          areaNotNeeded: 'No wallpaper needed: {area}',
+        },
+        comparison: {
+          title: 'Compared to calculation without openings',
+          reducedBody:
+            'Without doors/windows: {baselineRolls} rolls. With openings: {actualRolls} rolls. Coverage reduced by {areaSaved}.',
+          unchangedBody:
+            'Roll count unchanged ({rolls} rolls), but coverage reduced by {areaSaved}.',
+          increasedBody:
+            'Openings reduced coverage by {areaSaved}, but the planned layout needs {actualRolls} rolls instead of {baselineRolls}.',
+        },
+      },
+      explanation: {
+        toggleLabel: 'How we calculated this',
+        toggleHintCollapsed: 'Tap to expand the explanation',
+        toggleHintExpanded: 'Tap to collapse the explanation',
+        openingCount: { one: 'opening', few: 'openings', many: 'openings' },
+        steps: {
+          wallsTitle: 'Split the room into walls',
+          wallsBody: '{wallCount} walls. Total coverage area — {totalArea}.',
+          columnsTitle: 'Accounted for roll width',
+          columnsBody: '{columnCount} vertical strips across all walls.',
+          openingsTitle: 'Accounted for doors and windows',
+          openingsBody: 'Added {openingCount}. Coverage reduced by {areaSaved}.',
+          segmentsTitle: 'Prepared cut pieces',
+          segmentsBody:
+            'Areas above, below, and beside openings need separate pieces with trim allowance.',
+          rollPlanTitle: 'Placed cuts on rolls',
+          rollPlanBody: 'Planned cutting layout requires {plannedRolls}.',
+          conservativeTitle: 'Why this is not always the most economical layout',
+          conservativeBody:
+            'We use a safe cutting plan to avoid underestimating material. An experienced installer may reuse offcuts more efficiently.',
+        },
+      },
+      errors: {
+        openingOutsideWall: 'The opening extends outside the wall.',
+        overlappingOpenings: 'These openings overlap.',
+        offsetTooWide: 'Offset from the left plus width exceeds the wall width.',
+        doorTooTall: 'Door height exceeds wall height.',
+      },
     },
     pattern: {
       sheetTitle: 'Refine calculation with pattern',
@@ -152,6 +265,8 @@ export const en: TranslationTree = {
         unsupportedFeature: 'This calculation option is not available yet.',
         inputOverflow: 'One of the values is too large.',
         invalidInput: 'Check the values you entered.',
+        openingOutsideWall: 'The opening extends outside the wall.',
+        overlappingOpenings: 'These openings overlap.',
         generic: 'Calculation failed. Please check your inputs.',
       },
       general: 'Fix the errors in the form and try again.',

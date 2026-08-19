@@ -9,6 +9,9 @@ interface ExplanationSectionProps {
   steps: PresentedExplanationStep[]
   trimHint: string
   phaseAssumptionNote: string | null
+  toggleLabel?: string
+  toggleHintCollapsed?: string
+  toggleHintExpanded?: string
 }
 
 /**
@@ -20,34 +23,38 @@ export function ExplanationSection({
   steps,
   trimHint,
   phaseAssumptionNote,
+  toggleLabel,
+  toggleHintCollapsed,
+  toggleHintExpanded,
 }: ExplanationSectionProps) {
   const strings = t()
+  const resolvedToggleLabel = toggleLabel ?? strings.wallpaper.explanation.toggleLabel
+  const resolvedHintCollapsed = toggleHintCollapsed
+    ?? strings.wallpaper.explanation.toggleHintCollapsed
+  const resolvedHintExpanded = toggleHintExpanded
+    ?? strings.wallpaper.explanation.toggleHintExpanded
 
   return (
     <View style={styles.container}>
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ expanded }}
-        accessibilityHint={
-          expanded
-            ? strings.wallpaper.explanation.toggleHintExpanded
-            : strings.wallpaper.explanation.toggleHintCollapsed
-        }
+        accessibilityHint={expanded ? resolvedHintExpanded : resolvedHintCollapsed}
         onPress={onToggle}
         style={({ pressed }) => [styles.toggle, pressed && styles.togglePressed]}
       >
         <Text style={styles.toggleLabel}>
-          {strings.wallpaper.explanation.toggleLabel}
+          {resolvedToggleLabel}
         </Text>
         <Text style={styles.toggleIcon}>{expanded ? '▾' : '▸'}</Text>
       </Pressable>
 
       {expanded ? (
         <View style={styles.content}>
-          {steps.map((step) => (
-            <View key={step.stepNumber} style={styles.stepCard}>
+          {steps.map((step, index) => (
+            <View key={`${step.title}-${index}`} style={styles.stepCard}>
               <Text style={styles.stepTitle}>
-                {step.stepNumber}. {step.title}
+                {index + 1}. {step.title}
               </Text>
               <Text style={styles.stepBody}>{step.body}</Text>
             </View>

@@ -46,7 +46,7 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Subtle wallpaper background experiment
 - Half-drop: UI education only — calculation deferred
 
-## Phase 4B1 — Precise geometry & strip planner (current)
+## Phase 4B1 — Precise geometry & strip planner ✅
 
 - `calculatePreciseWallpaper()` — per-wall columns, openings, required segments
 - Policy A conservative FFD roll plan (`plannedRolls`; free match + openings)
@@ -54,11 +54,12 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Mixed wall heights; reference scenarios P1–P10; property invariants
 - Spec: `docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md`
 
-## Phase 4B2 — Precise Mode UX (next)
+## Phase 4B2 — Precise Mode UX (current)
 
-- Polished per-wall UI, doors/windows input
-- Presenter integration for opening savings explanations
-- Cut visualization (deferred from 4B1)
+- Route `/precise` — walls, doors/windows, wall preview sketch
+- Quick → Precise draft handoff; separate pattern vs precise entry cards
+- Presenter: planned-roll wording, opening impacts, comparison copy
+- Straight + openings blocked in UI before domain call
 
 ## Phase 4B3+ — Remaining precise scope
 
@@ -99,4 +100,4 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ---
 
-**Current focus:** Phase 4B1 precise geometry engine — domain + tests; UI in Phase 4B2.
+**Current focus:** Phase 4B2 Precise Mode UX on committed Phase 4B1 geometry engine.

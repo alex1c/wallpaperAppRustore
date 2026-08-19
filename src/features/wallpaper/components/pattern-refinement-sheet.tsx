@@ -30,20 +30,34 @@ interface PatternRefinementSheetProps {
   onClose: () => void
   onCalculate: (patternValues: PatternFormValues) => void
   onDraftChange: () => void
+  initialValues?: PatternFormValues
 }
 
 /**
  * Progressive-disclosure sheet for pattern-aware calculation.
  * Keeps the main Quick form simple — pattern inputs live here only.
  */
-export function PatternRefinementSheet({
+export function PatternRefinementSheet(props: PatternRefinementSheetProps) {
+  if (!props.visible) {
+    return null
+  }
+
+  const sheetKey = `${props.initialValues?.matchType ?? 'default'}-${props.initialValues?.repeatCm ?? ''}`
+
+  return <PatternRefinementSheetBody key={sheetKey} {...props} />
+}
+
+function PatternRefinementSheetBody({
   visible,
   onClose,
   onCalculate,
   onDraftChange,
+  initialValues,
 }: PatternRefinementSheetProps) {
   const strings = t()
-  const [patternValues, setPatternValues] = useState<PatternFormValues>(DEFAULT_PATTERN_FORM_VALUES)
+  const [patternValues, setPatternValues] = useState<PatternFormValues>(
+    initialValues ?? DEFAULT_PATTERN_FORM_VALUES,
+  )
   const [repeatError, setRepeatError] = useState<string | null>(null)
   const [halfDropMessage, setHalfDropMessage] = useState<string | null>(null)
   const [labelHelperVisible, setLabelHelperVisible] = useState(false)

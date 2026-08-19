@@ -104,7 +104,7 @@ Never require the user to understand professional terms first.
 Quick mode assumes a **rectangular room**. It does not claim maximum precision.
 If no pattern is specified, the result must make clear that pattern matching was **not** applied.
 
-### B. Precise calculation — Phase 4B1 domain (UI in 4B2)
+### B. Precise calculation — Phase 4B1 domain + Phase 4B2 UX
 
 Implemented in domain (Phase 4B1):
 
@@ -114,9 +114,11 @@ Implemented in domain (Phase 4B1):
 - opening savings metrics for explainability
 - free match + openings; straight without openings
 
+Phase 4B2 adds the progressive Precise Mode UI for walls, openings, wallpaper
+configuration, and the conservative planned-roll result.
+
 Deferred to later phases:
 
-- polished Precise Mode UI (4B2)
 - straight match + openings
 - half-drop calculation
 - cut visualization

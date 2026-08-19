@@ -35,9 +35,126 @@ export const ru: TranslationTree = {
       },
     },
     calculate: 'Рассчитать',
-    preciseEntry: {
+    patternEntry: {
       title: 'На обоях есть рисунок? Уточнить расчёт →',
       subtitle: 'Учтём повтор рисунка и маркировку с этикетки',
+    },
+    preciseEntry: {
+      title: 'Сделать расчёт точнее →',
+      subtitle: 'Учесть размеры отдельных стен, двери и окна',
+    },
+    precise: {
+      screenTitle: 'Точный расчёт',
+      back: 'Назад',
+      intro: 'Уточните размеры стен и добавьте двери или окна, если нужно.',
+      sections: {
+        walls: 'Стены',
+        openings: 'Двери и окна',
+        wallpaper: 'Обои',
+      },
+      walls: {
+        wallTitle: 'Стена {number}',
+        width: 'Ширина',
+        height: 'Высота',
+        addWall: '+ Добавить стену',
+        removeWall: 'Удалить',
+        removeWallHint: 'Удалить эту стену из расчёта',
+      },
+      openings: {
+        emptyTitle: 'Дверей и окон пока нет',
+        emptyBody:
+          'Если добавить их размеры, расчёт сможет точнее оценить площадь оклейки.',
+        addDoor: '+ Добавить дверь',
+        addWindow: '+ Добавить окно',
+        editDoor: 'Дверь',
+        editWindow: 'Окно',
+        remove: 'Удалить',
+        removeHint: 'Удалить проём из расчёта',
+        doorLabel: 'Дверь',
+        windowLabel: 'Окно',
+        onWall: 'На какой стене',
+        width: 'Ширина',
+        height: 'Высота',
+        offsetFromLeft: 'От левого края стены',
+        offsetFromLeftHint:
+          'Измерьте расстояние от левого края выбранной стены до начала проёма.',
+        offsetFromFloor: 'От пола',
+        offsetFromFloorHint:
+          'Измерьте расстояние от пола до нижнего края окна.',
+        save: 'Сохранить',
+        cancel: 'Отмена',
+        previewLabel: 'Схема стены',
+        previewHint: 'Проверьте, что проём расположен так, как вы измерили.',
+      },
+      wallpaper: {
+        rollSummary: 'Размер рулона',
+        changeRoll: 'Изменить',
+        rollDone: 'Готово',
+        patternSummary: 'Рисунок',
+        noPattern: 'Без учёта рисунка',
+        changePattern: 'Изменить',
+      },
+      calculate: 'Рассчитать',
+      unsupportedPatternWithOpenings:
+        'Точный расчёт дверей и окон для обоев с совмещением рисунка пока не поддерживается. Можно рассчитать стены без проёмов или выполнить расчёт без учёта рисунка.',
+      result: {
+        plannedHeading: 'По расчётному раскрою',
+        plannedHelper:
+          'Расчёт использует практичный консервативный раскрой. При ручной оптимизации остатков иногда можно использовать материал ещё эффективнее.',
+        coverageAreaLabel: 'Площадь оклейки',
+        conservativeNote:
+          'Мы используем консервативный вариант раскроя, чтобы не занизить количество материала. Опытный мастер иногда сможет использовать остатки эффективнее.',
+        openingImpactsTitle: 'Что изменили проёмы',
+        wallCount: { one: 'стена', few: 'стены', many: 'стен' },
+        doorCount: { one: 'дверь', few: 'двери', many: 'дверей' },
+        windowCount: { one: 'окно', few: 'окна', many: 'окон' },
+        openingImpact: {
+          doorOnWall: 'Дверь на стене {wallNumber}',
+          windowOnWall: 'Окно на стене {wallNumber}',
+          areaNotNeeded: 'Не нужно оклеивать: {area}',
+        },
+        comparison: {
+          title: 'Сравнение с расчётом без проёмов',
+          reducedBody:
+            'Без учёта дверей и окон: {baselineRolls} рул. С учётом: {actualRolls} рул. Площадь оклейки уменьшилась на {areaSaved}.',
+          unchangedBody:
+            'Количество рулонов не изменилось ({rolls} рул.), но площадь оклейки уменьшилась на {areaSaved}.',
+          increasedBody:
+            'Проём уменьшил площадь оклейки на {areaSaved}, но из-за раскроя по расчётному плану понадобилось {actualRolls} рул. вместо {baselineRolls}.',
+        },
+      },
+      explanation: {
+        toggleLabel: 'Как мы это посчитали?',
+        toggleHintCollapsed: 'Нажмите, чтобы раскрыть пояснение',
+        toggleHintExpanded: 'Нажмите, чтобы скрыть пояснение',
+        openingCount: { one: 'проём', few: 'проёма', many: 'проёмов' },
+        steps: {
+          wallsTitle: 'Разбили комнату на стены',
+          wallsBody:
+            'Указано {wallCount} стен. Общая площадь оклейки — {totalArea}.',
+          columnsTitle: 'Учли ширину рулона',
+          columnsBody:
+            'На стенах определили {columnCount} вертикальных полотен по ширине рулона.',
+          openingsTitle: 'Учли двери и окна',
+          openingsBody:
+            'Добавлено {openingCount}. Площадь оклейки уменьшилась на {areaSaved}.',
+          segmentsTitle: 'Подготовили отрезки',
+          segmentsBody:
+            'Для участков над, под и рядом с проёмами нужны отдельные куски обоев с запасом на подрезку.',
+          rollPlanTitle: 'Разместили отрезки по рулонам',
+          rollPlanBody: 'По расчётному раскрою потребуется {plannedRolls}.',
+          conservativeTitle: 'Почему это не всегда самый экономный раскрой',
+          conservativeBody:
+            'Мы используем безопасный вариант раскроя, чтобы не занизить количество материала. Опытный мастер иногда сможет использовать остатки эффективнее.',
+        },
+      },
+      errors: {
+        openingOutsideWall: 'Проём выходит за границы стены.',
+        overlappingOpenings: 'Эти проёмы пересекаются.',
+        offsetTooWide:
+          'Расстояние от левого края и ширина проёма больше ширины стены.',
+        doorTooTall: 'Высота двери больше высоты стены.',
+      },
     },
     pattern: {
       sheetTitle: 'Уточнить расчёт с рисунком',
@@ -181,6 +298,8 @@ export const ru: TranslationTree = {
           'Этот вариант расчёта пока недоступен.',
         inputOverflow: 'Одно из значений слишком большое.',
         invalidInput: 'Проверьте введённые данные.',
+        openingOutsideWall: 'Проём выходит за границы стены.',
+        overlappingOpenings: 'Эти проёмы пересекаются.',
         generic: 'Не удалось выполнить расчёт. Проверьте введённые данные.',
       },
       general: 'Исправьте ошибки в форме и попробуйте снова.',

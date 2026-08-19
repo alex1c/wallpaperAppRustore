@@ -11,11 +11,11 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 4B1 — Precise geometry & strip planner** (complete, pending commit)
+**Phase 4B2 — Precise Mode UX** (complete, pending commit)
 
-Phase 4A committed at `8fdc5a9`. Phase 4B1 adds `calculatePreciseWallpaper()` — per-wall strip columns, opening geometry, required segments, Policy A roll planner, reference scenarios P1–P10, and property invariants. Free match + openings supported; straight + openings deferred; half-drop still deferred.
+Phase 4B1 committed at `7b25e30`. Phase 4B2 adds `/precise` screen — walls, doors/windows, wall preview, result presenter with «По расчётному раскрою» wording, Quick → Precise handoff, separate pattern entry card.
 
-**Do NOT implement Phase 4B2 scope** (polished precise UI), **4B half-drop calculation**, persistence, ads, or RuStore release in this phase.
+**Do NOT implement** half-drop calculation, persistence, ads, or RuStore release in this phase.
 
 ## Tech stack (pinned at project creation)
 

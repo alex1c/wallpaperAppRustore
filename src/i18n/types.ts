@@ -33,9 +33,111 @@ export interface TranslationTree {
       }
     }
     calculate: string
+    patternEntry: {
+      title: string
+      subtitle: string
+    }
     preciseEntry: {
       title: string
       subtitle: string
+    }
+    precise: {
+      screenTitle: string
+      back: string
+      intro: string
+      sections: {
+        walls: string
+        openings: string
+        wallpaper: string
+      }
+      walls: {
+        wallTitle: string
+        width: string
+        height: string
+        addWall: string
+        removeWall: string
+        removeWallHint: string
+      }
+      openings: {
+        emptyTitle: string
+        emptyBody: string
+        addDoor: string
+        addWindow: string
+        editDoor: string
+        editWindow: string
+        remove: string
+        removeHint: string
+        doorLabel: string
+        windowLabel: string
+        onWall: string
+        width: string
+        height: string
+        offsetFromLeft: string
+        offsetFromLeftHint: string
+        offsetFromFloor: string
+        offsetFromFloorHint: string
+        save: string
+        cancel: string
+        previewLabel: string
+        previewHint: string
+      }
+      wallpaper: {
+        rollSummary: string
+        changeRoll: string
+        rollDone: string
+        patternSummary: string
+        noPattern: string
+        changePattern: string
+      }
+      calculate: string
+      unsupportedPatternWithOpenings: string
+      result: {
+        plannedHeading: string
+        plannedHelper: string
+        coverageAreaLabel: string
+        conservativeNote: string
+        openingImpactsTitle: string
+        wallCount: { one: string; few: string; many: string }
+        doorCount: { one: string; few: string; many: string }
+        windowCount: { one: string; few: string; many: string }
+        openingImpact: {
+          doorOnWall: string
+          windowOnWall: string
+          areaNotNeeded: string
+        }
+        comparison: {
+          title: string
+          reducedBody: string
+          unchangedBody: string
+          increasedBody: string
+        }
+      }
+      explanation: {
+        toggleLabel: string
+        toggleHintCollapsed: string
+        toggleHintExpanded: string
+        openingCount: { one: string; few: string; many: string }
+        steps: {
+          wallsTitle: string
+          wallsBody: string
+          columnsTitle: string
+          columnsBody: string
+          openingsTitle: string
+          openingsBody: string
+          segmentsTitle: string
+          segmentsBody: string
+          rollPlanTitle: string
+          rollPlanBody: string
+          conservativeTitle: string
+          conservativeBody: string
+        }
+      }
+      errors: {
+        openingOutsideWall: string
+        overlappingOpenings: string
+        offsetTooWide: string
+        doorTooTall: string
+      }
     }
     pattern: {
       sheetTitle: string
@@ -125,6 +227,8 @@ export interface TranslationTree {
         unsupportedFeature: string
         inputOverflow: string
         invalidInput: string
+        openingOutsideWall: string
+        overlappingOpenings: string
         generic: string
       }
       general: string

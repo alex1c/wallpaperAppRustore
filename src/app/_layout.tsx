@@ -14,13 +14,7 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: '#F7F8FA' },
           headerShown: false,
         }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen
-          name="wallpaper/index"
-          options={{ animation: 'none' }}
-        />
-      </Stack>
+      />
     </>
   )
 }

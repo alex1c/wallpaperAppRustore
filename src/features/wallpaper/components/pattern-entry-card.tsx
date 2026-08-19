@@ -2,28 +2,26 @@ import { Pressable, StyleSheet, Text } from 'react-native'
 import { t } from '@/i18n'
 import { colors, radii, spacing, typography } from '@/theme'
 
-interface PreciseEntryCardProps {
+interface PatternEntryCardProps {
   onPress: () => void
 }
 
-/**
- * Secondary entry point for Precise Mode — per-wall geometry with openings.
- */
-export function PreciseEntryCard({ onPress }: PreciseEntryCardProps) {
+/** Secondary entry for pattern-aware Quick calculation refinement. */
+export function PatternEntryCard({ onPress }: PatternEntryCardProps) {
   const strings = t()
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityHint={strings.wallpaper.preciseEntry.subtitle}
+      accessibilityHint={strings.wallpaper.patternEntry.subtitle}
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
         pressed && styles.cardPressed,
       ]}
     >
-      <Text style={styles.title}>{strings.wallpaper.preciseEntry.title}</Text>
-      <Text style={styles.subtitle}>{strings.wallpaper.preciseEntry.subtitle}</Text>
+      <Text style={styles.title}>{strings.wallpaper.patternEntry.title}</Text>
+      <Text style={styles.subtitle}>{strings.wallpaper.patternEntry.subtitle}</Text>
     </Pressable>
   )
 }
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radii.lg,
     borderWidth: 1,
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
     minHeight: 44,
     padding: spacing.md,
   },

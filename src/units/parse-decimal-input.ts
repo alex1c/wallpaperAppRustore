@@ -72,6 +72,41 @@ export function parseMetersInputToMillimeters(raw: string): ParseDecimalInputRes
 }
 
 /**
+ * Parses a meter offset where zero is a valid position (for example, an
+ * opening touching the left wall edge or the floor). Dimensions must continue
+ * to use {@link parseMetersInputToMillimeters}, which rejects zero.
+ */
+export function parseMetersInputToNonNegativeMillimeters(
+  raw: string,
+): ParseDecimalInputResult {
+  const trimmed = raw.trim()
+
+  if (trimmed.length === 0) {
+    return { ok: false, code: 'EMPTY' }
+  }
+
+  const normalized = normalizeDecimalInput(trimmed)
+
+  if (!/^\d+(\.\d+)?$/.test(normalized)) {
+    return { ok: false, code: 'INVALID_FORMAT' }
+  }
+
+  const meters = Number(normalized)
+
+  if (!Number.isFinite(meters)) {
+    return { ok: false, code: 'NOT_FINITE' }
+  }
+
+  const valueMm = Math.round(meters * 1000) as Millimeters
+
+  if (valueMm < 0 || valueMm > MAX_INPUT_LENGTH_MM) {
+    return { ok: false, code: 'TOO_LARGE' }
+  }
+
+  return { ok: true, valueMm }
+}
+
+/**
  * Parses a user decimal string in centimeters and converts to canonical integer mm.
  * Example: "106" cm → 1060 mm; "53,5" cm → 535 mm (rounded to nearest mm).
  */

@@ -104,6 +104,7 @@ Future: `@react-native-async-storage/async-storage` or similar without UI change
 |-------|--------|
 | `/` | Wallpaper calculator — Quick Mode MVP (Phase 3) |
 | `/wallpaper` | Legacy redirect to `/` |
+| `/precise` | Precise Mode — per-wall geometry and openings (Phase 4B2) |
 
 ## Native SDK plan (deferred)
 

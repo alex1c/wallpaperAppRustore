@@ -2,6 +2,7 @@ import {
   METER_INPUT_MAX_DECIMAL_PLACES,
   normalizeDecimalInput,
   parseMetersInputToMillimeters,
+  parseMetersInputToNonNegativeMillimeters,
 } from '@/units/parse-decimal-input'
 
 describe('parseMetersInputToMillimeters', () => {
@@ -90,6 +91,32 @@ describe('parseMetersInputToMillimeters', () => {
 
   it('documents max decimal places constant', () => {
     expect(METER_INPUT_MAX_DECIMAL_PLACES).toBe(3)
+  })
+})
+
+describe('parseMetersInputToNonNegativeMillimeters', () => {
+  it.each(['0', '00', '0,0', '0.00', '0,000'])('accepts zero offset %s', (value) => {
+    expect(parseMetersInputToNonNegativeMillimeters(value)).toEqual({
+      ok: true,
+      valueMm: 0,
+    })
+  })
+
+  it('accepts positive comma and dot offsets', () => {
+    expect(parseMetersInputToNonNegativeMillimeters('0,9')).toEqual({
+      ok: true,
+      valueMm: 900,
+    })
+    expect(parseMetersInputToNonNegativeMillimeters('1.06')).toEqual({
+      ok: true,
+      valueMm: 1060,
+    })
+  })
+
+  it('rejects malformed and negative offsets', () => {
+    expect(parseMetersInputToNonNegativeMillimeters('-1').ok).toBe(false)
+    expect(parseMetersInputToNonNegativeMillimeters('0,,1').ok).toBe(false)
+    expect(parseMetersInputToNonNegativeMillimeters('').ok).toBe(false)
   })
 })
 

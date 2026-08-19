@@ -50,6 +50,25 @@ export function formatCount(value: number, locale: SupportedLocale): string {
   }).format(value)
 }
 
+/**
+ * Formats square millimeters as square meters for user-facing copy.
+ * Example RU: 1_890_000 mm² → "1,89 м²".
+ */
+export function formatSquareMetersFromMm2(
+  valueMm2: number,
+  locale: SupportedLocale,
+  options?: { minimumFractionDigits?: number; maximumFractionDigits?: number },
+): string {
+  const squareMeters = valueMm2 / 1_000_000
+  const formatted = new Intl.NumberFormat(resolveIntlLocale(locale), {
+    minimumFractionDigits: options?.minimumFractionDigits ?? 0,
+    maximumFractionDigits: options?.maximumFractionDigits ?? 2,
+  }).format(squareMeters)
+
+  const unit = locale === 'ru' ? 'м²' : 'm²'
+  return `${formatted} ${unit}`
+}
+
 /** Replaces `{key}` placeholders in i18n templates with pre-formatted values. */
 export function interpolateTemplate(
   template: string,

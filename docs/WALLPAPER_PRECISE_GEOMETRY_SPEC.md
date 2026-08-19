@@ -1,7 +1,7 @@
 # Precise Geometry Specification — Phase 4B1
 
 > **Status:** Phase 4B1 domain engine — geometry + strip planner.  
-> **UI:** Phase 4B2 (not in this document).  
+> **UI:** Phase 4B2 consumes this API; this document remains the domain specification.
 > **Source:** `src/domain/wallpaper/precise/`
 
 ## Purpose
@@ -285,4 +285,4 @@ Shared: strip-length, pattern-step, roll validation, MaterialBreakdown types
 Not shared: perimeter aggregation, corner allowance, opening segment decomposition
 ```
 
-Future Phase 4B2 will add UI adapters that call `calculatePreciseWallpaper` and present results via the existing presenter pattern.
+Phase 4B2 UI adapters call `calculatePreciseWallpaper` and present its result via the existing presenter pattern without recalculating geometry.
