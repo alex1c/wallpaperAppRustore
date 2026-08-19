@@ -11,11 +11,11 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 4A — Pattern match & label helper** (complete, pending commit)
+**Phase 4B1 — Precise geometry & strip planner** (complete, pending commit)
 
-Phase 3 MVP UX committed at `2eb7292`. Phase 4A adds human-first pattern refinement sheet, roll label helper, straight-match UI wired to domain, phase-assumption note, subtle wallpaper background, and expanded explanation steps. Half-drop remains UI-only (deferred calculation).
+Phase 4A committed at `8fdc5a9`. Phase 4B1 adds `calculatePreciseWallpaper()` — per-wall strip columns, opening geometry, required segments, Policy A roll planner, reference scenarios P1–P10, and property invariants. Free match + openings supported; straight + openings deferred; half-drop still deferred.
 
-**Do NOT implement Phase 4B scope** (per-wall, doors/windows, half-drop calculation, persistence, ads, RuStore release).
+**Do NOT implement Phase 4B2 scope** (polished precise UI), **4B half-drop calculation**, persistence, ads, or RuStore release in this phase.
 
 ## Tech stack (pinned at project creation)
 
@@ -57,6 +57,7 @@ Verify exact versions in `package.json` after install.
 |----------|---------|
 | [docs/PRODUCT_STRATEGY.md](docs/PRODUCT_STRATEGY.md) | Portfolio vision, market, metrics |
 | [docs/WALLPAPER_PRODUCT_SPEC.md](docs/WALLPAPER_PRODUCT_SPEC.md) | Product spec — calculation model, modes, deferred scope |
+| [docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md](docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md) | Phase 4B1 precise geometry, segments, roll planner |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Layer boundaries and diagrams |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Phased delivery plan |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | ADR log — architectural decisions |

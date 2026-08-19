@@ -3,6 +3,7 @@ export {
   calculateQuickWallpaper,
   calculateQuickWallpaperRolls,
 } from './quick-calculation'
+export { calculatePreciseWallpaper } from './precise/calculate-precise'
 export {
   DEFAULT_TRIM_ALLOWANCE,
   DEFAULT_TOP_TRIM_MM,
@@ -65,4 +66,16 @@ export type {
   WallpaperCalculationTrace,
   WasteMetrics,
 } from './types'
+export type {
+  OpeningSavingsMetrics,
+  PreciseOpeningImpact,
+  PreciseOpening,
+  PrecisePhysicalCut,
+  PreciseRollUsageEntry,
+  PreciseWallpaperCalculationInput,
+  PreciseWallpaperCalculationResult,
+  RequiredVerticalSegment,
+  WallPlanningSummary,
+  WallStripColumn,
+} from './precise/types'
 export { isPatternMatch } from './types'

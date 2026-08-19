@@ -39,6 +39,13 @@
 - Maps domain error codes to i18n keys — never exposes raw `error.message`
 - Does **not** recalculate rolls, strips, or pattern math
 
+### Precise geometry (`src/domain/wallpaper/precise/`)
+
+- Per-wall strip columns, opening rectilinear decomposition, required segments
+- Policy A one-segment/one-cut model with conservative FFD roll-tail packing
+- `calculatePreciseWallpaper()` — separate entry from Quick aggregate engine
+- Shared helpers: strip length, pattern step; not shared: perimeter/corner aggregation
+
 ### Pattern refinement (`src/features/wallpaper/pattern/`, `parse-pattern-form.ts`)
 
 - Human-first pattern sheet — separate from Quick form
@@ -56,6 +63,7 @@
 - Canonical length: **millimeters**; area: **square millimeters**
 - **Strip-based** roll count (not area-based); see `docs/WALLPAPER_PRODUCT_SPEC.md`
 - Quick mode: `QuickRoomInput` → `Wall[]` → `calculateWallpaper()`
+- Precise mode (4B1): `PreciseWallpaperCalculationInput` → `calculatePreciseWallpaper()` — per-wall strip planner; see `docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md`
 
 ### Advertising (`src/services/ads/`)
 

@@ -38,7 +38,7 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Expandable “How we calculated” explanation
 - Phase 3.1: direct launch, custom roll cm, single pattern entry point
 
-## Phase 4A — Pattern match & label helper (current)
+## Phase 4A — Pattern match & label helper ✅
 
 - Human-first pattern refinement sheet (straight match via existing domain)
 - Roll label helper (examples, not exhaustive standard)
@@ -46,11 +46,25 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Subtle wallpaper background experiment
 - Half-drop: UI education only — calculation deferred
 
-## Phase 4B — Precise calculation (next)
+## Phase 4B1 — Precise geometry & strip planner (current)
 
-- Per-wall mode, half-drop calculation, cut visualization
-- Doors/windows, roll cut planning
-- “Already have N rolls — enough?” mode
+- `calculatePreciseWallpaper()` — per-wall columns, openings, required segments
+- Policy A conservative FFD roll plan (`plannedRolls`; free match + openings)
+- Straight match without openings; straight + openings deferred
+- Mixed wall heights; reference scenarios P1–P10; property invariants
+- Spec: `docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md`
+
+## Phase 4B2 — Precise Mode UX (next)
+
+- Polished per-wall UI, doors/windows input
+- Presenter integration for opening savings explanations
+- Cut visualization (deferred from 4B1)
+
+## Phase 4B3+ — Remaining precise scope
+
+- Half-drop calculation
+- Safe offcut reuse (Policy B research)
+- “Already have N rolls — enough?” in precise context
 
 ## Phase 5 — Ads & analytics
 
@@ -85,4 +99,4 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ---
 
-**Current focus:** Phase 4A pattern refinement UX on committed Phase 3 Quick Mode.
+**Current focus:** Phase 4B1 precise geometry engine — domain + tests; UI in Phase 4B2.

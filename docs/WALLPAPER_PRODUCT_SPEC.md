@@ -104,19 +104,24 @@ Never require the user to understand professional terms first.
 Quick mode assumes a **rectangular room**. It does not claim maximum precision.
 If no pattern is specified, the result must make clear that pattern matching was **not** applied.
 
-### B. Precise calculation — next level (Phase 4 UI)
+### B. Precise calculation — Phase 4B1 domain (UI in 4B2)
 
-Planned:
+Implemented in domain (Phase 4B1):
 
-- individual walls
-- pattern repeat, match type, offset
-- trim allowance
-- doors, windows
-- excluded wall
-- different wall heights
-- real strip layout
+- individual walls with independent heights
+- doors and windows via strip-column geometry (not area subtraction)
+- required vertical segments and physical cut plan
+- opening savings metrics for explainability
+- free match + openings; straight without openings
 
-Phase 2 domain types support this; production calculation for openings and half-drop is deferred.
+Deferred to later phases:
+
+- polished Precise Mode UI (4B2)
+- straight match + openings
+- half-drop calculation
+- cut visualization
+
+See `docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md`.
 
 ### C. “I already have N rolls” (Phase 2 engine)
 
@@ -210,7 +215,7 @@ Trim may be **zero** (`>= 0`). Default quick mode: 50 mm top + 50 mm bottom.
 
 ### Uniform wall heights (Phase 2.1)
 
-Shared engine accepts `Wall[]` only when **all heights are equal**. Different heights → `UNSUPPORTED_DIFFERENT_WALL_HEIGHTS`. Per-wall planner deferred to Phase 4.
+Shared **Quick** engine accepts `Wall[]` only when **all heights are equal**. Different heights → `UNSUPPORTED_DIFFERENT_WALL_HEIGHTS`. **Precise** engine (`calculatePreciseWallpaper`) supports mixed heights per wall.
 
 ---
 
@@ -307,17 +312,23 @@ Initial policy: suggest 1 spare when `minimumRolls >= 2`; none when `minimumRoll
 
 ---
 
-## 14. Doors and windows — deferred
+## 14. Doors and windows — Phase 4B1
 
 **Do not** use `wall area − opening area` as precise calculation.
 
 Openings affect strip layout geometrically; a door does not always save a whole strip.
 
-Phase 2:
+**Phase 4B1 (precise engine):**
 
-- `Opening` type exists for future use
-- Openings are **not** included in production calculation
-- Documented as deferred to Phase 4 strip-layout algorithm
+- Rectangular openings on individual walls
+- Rectilinear grid decomposition per strip column
+- `calculatePreciseWallpaper()` returns segments, cuts, and opening savings metrics
+- Free match + openings supported
+- Straight match + openings rejected (`UNSUPPORTED_PRECISE_PATTERN_CONFIGURATION`)
+
+**Phase 2 Quick engine:** openings still not included in `calculateWallpaper()`.
+
+See `docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md`.
 
 ---
 

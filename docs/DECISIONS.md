@@ -403,3 +403,73 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** No remote assets or new dependencies; easy to remove if manual review fails.
 
 **Consequences:** Applied in `ScreenContainer`; must pass Android readability check.
+
+---
+
+## 2026-08-19 — Precise geometry: no area subtraction (Phase 4B1)
+
+**Status:** Accepted
+
+**Context:** Phase 4B1 requires mathematically correct opening handling. Subtracting opening area from wall area can under-buy when a narrow door does not eliminate a full strip column.
+
+**Decision:** Precise engine decomposes each strip column into required vertical segments via rectilinear grid at opening boundaries. Coverage area is an informational metric; roll planning uses physical cuts per segment.
+
+**Why:** Correctness and explainability; matches professional strip-based estimation.
+
+**Consequences:** Linear cut material may exceed no-opening baseline when partial segments add cuts beside full-height regions. Invariant tests use coverage area, not linear cuts.
+
+---
+
+## 2026-08-19 — Policy A offcut reuse in Phase 4B1 (Phase 4B1)
+
+**Status:** Accepted
+
+**Context:** Offcut reuse across positions requires pattern phase and width compatibility proofs.
+
+**Decision:** Phase 4B1 implements **Policy A** — each required segment is one physical cut and a cut piece is never assigned twice. Uncut roll tails may receive later cuts using deterministic first-fit-decreasing packing.
+
+**Why:** Conservative and auditable; avoids silent double-use of cut pieces and NP-hard global optimization.
+
+**Consequences:** Public precise result calls the count `plannedRolls`, not `minimumRolls`: FFD may overbuy versus an exact bin-packing optimum or an expert installer who reuses scraps. Policy B remains future research.
+
+---
+
+## 2026-08-19 — Per-wall corner policy in precise mode (Phase 4B1)
+
+**Status:** Accepted
+
+**Context:** Quick Mode adds 80 mm corner allowance on perimeter. Precise Mode plans walls separately.
+
+**Decision:** Phase 4B1 does **not** merge walls at corners or transfer Quick corner allowance. Each wall gets `ceil(width / rollWidth)` columns independently.
+
+**Why:** Corner strip continuity is a separate product decision; conservative per-wall count avoids underbuy.
+
+**Consequences:** Precise totals may exceed Quick totals for the same room; explicit corner overlap may be added in a later phase.
+
+---
+
+## 2026-08-19 — Straight + openings deferred in Phase 4B1 (Phase 4B1)
+
+**Status:** Accepted
+
+**Context:** Short segments above/below openings need vertical pattern phase alignment with adjacent full-height strips. Naive `requiredLength = yEnd − yStart` is incorrect for patterned wallpaper.
+
+**Decision:** `calculatePreciseWallpaper` rejects straight match when any opening is present (`UNSUPPORTED_PRECISE_PATTERN_CONFIGURATION`). Straight match without openings uses per-wall full-height pattern step (Phase 2 model).
+
+**Why:** Correctness over feature count.
+
+**Consequences:** Precise UI must communicate limitation until phase-aware patterned openings are designed and tested.
+
+---
+
+## 2026-08-19 — Mixed wall heights in precise engine (Phase 4B1)
+
+**Status:** Accepted
+
+**Context:** Phase 2 Quick engine rejects mixed heights. Codex counterexample: 10000×2500 + 1000×5000 walls.
+
+**Decision:** `calculatePreciseWallpaper` plans each wall with its own height. Quick engine behaviour unchanged.
+
+**Why:** Per-wall model is the foundation for Precise Mode.
+
+**Consequences:** P6 regression confirms precise success + Quick still returns `UNSUPPORTED_DIFFERENT_WALL_HEIGHTS`.
