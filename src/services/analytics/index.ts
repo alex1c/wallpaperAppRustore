@@ -22,6 +22,7 @@ export type {
   AnalyticsEventMap,
   AnalyticsEventName,
   AnalyticsScreenName,
+  ModeAnalyticsValue,
   OpeningCountBucket,
   OpeningTypeAnalyticsValue,
   PatternAnalyticsValue,

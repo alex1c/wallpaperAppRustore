@@ -211,6 +211,34 @@ export const en: TranslationTree = {
       totalWithSpare: 'Total with spare:',
       patternAppliedBadge: 'Pattern included',
     },
+    share: {
+      button: 'Share calculation',
+      sheetTitle: 'Share calculation',
+      textAction: 'Send result',
+      textActionHint: 'Short text for messenger or email',
+      pdfAction: 'Detailed PDF',
+      pdfActionHint: 'A clean report to save or print',
+      cancel: 'Cancel',
+      reportTitle: 'Wallpaper calculation',
+      footer: 'Calculated in Wallpaper Calculator.',
+      sections: {
+        room: 'Room',
+        walls: 'Walls',
+        wallpaper: 'Wallpaper',
+        openings: 'Doors and windows',
+        explanation: 'How the result was calculated',
+      },
+      errors: {
+        generic: 'Could not share. Please try again.',
+        unavailable: 'Sharing is unavailable on this device.',
+        pdfFailed: 'Could not create the PDF. Please try again.',
+        halfDropBlocked:
+          'A report for offset pattern matching is not available yet — numeric calculation is not supported for this mode.',
+      },
+      status: {
+        generatingPdf: 'Preparing PDF…',
+      },
+    },
     explanation: {
       toggleLabel: 'How we calculated this',
       toggleHintCollapsed: 'Tap to expand the explanation',

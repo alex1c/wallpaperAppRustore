@@ -11,9 +11,9 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 5A — Product analytics foundation** (complete / ACCEPT)
+**Phase 5B — Share + PDF** (in progress, uncommitted)
 
-AppMetrica is live behind `AnalyticsService` with a privacy-first event taxonomy. Next: **Phase 5B — Share calculation** (system Android Share Sheet). **Do NOT** add advertising SDKs or change calculation semantics in 5B.
+Share calculation via Android system Share Sheet (text + PDF). **Do NOT** add advertising SDKs or change calculation semantics.
 
 ## Tech stack (pinned at project creation)
 
@@ -60,6 +60,7 @@ Verify exact versions in `package.json` after install.
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Phased delivery plan |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | ADR log — architectural decisions |
 | [docs/ANALYTICS.md](docs/ANALYTICS.md) | Phase 5A AppMetrica taxonomy, privacy, config |
+| [docs/SHARING_AND_REPORTS.md](docs/SHARING_AND_REPORTS.md) | Phase 5B Share Sheet + text/PDF reports |
 | [README.md](README.md) | Setup, scripts, project structure |
 
 > Before doing substantial work, read **AGENTS.md** and the documents it references.

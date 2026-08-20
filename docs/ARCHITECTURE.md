@@ -80,7 +80,8 @@ UI → AnalyticsService → Safe wrapper → AppMetrica | Dev | Noop
 ```
 
 Phase 5A: AppMetrica adapter + privacy-first taxonomy (`docs/ANALYTICS.md`).
-UI never imports `@appmetrica/react-native-analytics` directly.
+Phase 5B: Share/PDF via `ShareService` + `src/features/wallpaper/report/` (`docs/SHARING_AND_REPORTS.md`).
+UI never imports `@appmetrica/react-native-analytics` or vendor chat SDKs directly.
 
 ### Persistence (`src/services/persistence/`)
 
@@ -112,8 +113,8 @@ Future: `@react-native-async-storage/async-storage` or similar without UI change
 | SDK | Phase | Integration point |
 |-----|-------|-------------------|
 | AppMetrica | 5A | `AppMetricaAnalyticsService implements AnalyticsService` |
-| Share / PDF | 5B | System Share Sheet — no vendor chat SDKs |
-| Yandex Mobile Ads | 6 | `YandexAdService implements AdService` |
+| Share / PDF | 5B | `ShareService` + report layer — system Share Sheet only |
+| Yandex Mobile Ads | 5C / 6 | `YandexAdService implements AdService` |
 
 Validate each SDK in a **development build** before store release.
 

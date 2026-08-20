@@ -186,6 +186,33 @@ export interface TranslationTree {
       totalWithSpare: string
       patternAppliedBadge: string
     }
+    share: {
+      button: string
+      sheetTitle: string
+      textAction: string
+      textActionHint: string
+      pdfAction: string
+      pdfActionHint: string
+      cancel: string
+      reportTitle: string
+      footer: string
+      sections: {
+        room: string
+        walls: string
+        wallpaper: string
+        openings: string
+        explanation: string
+      }
+      errors: {
+        generic: string
+        unavailable: string
+        pdfFailed: string
+        halfDropBlocked: string
+      }
+      status: {
+        generatingPdf: string
+      }
+    }
     explanation: {
       toggleLabel: string
       toggleHintCollapsed: string

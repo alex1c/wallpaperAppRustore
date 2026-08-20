@@ -242,6 +242,34 @@ export const ru: TranslationTree = {
       totalWithSpare: 'Итого с запасом:',
       patternAppliedBadge: 'С учётом рисунка',
     },
+    share: {
+      button: 'Поделиться расчётом',
+      sheetTitle: 'Поделиться расчётом',
+      textAction: 'Отправить результат',
+      textActionHint: 'Короткий текст для мессенджера или почты',
+      pdfAction: 'Подробный PDF',
+      pdfActionHint: 'Аккуратный отчёт для сохранения или печати',
+      cancel: 'Отмена',
+      reportTitle: 'Расчёт обоев',
+      footer: 'Рассчитано в приложении «Калькулятор обоев».',
+      sections: {
+        room: 'Комната',
+        walls: 'Стены',
+        wallpaper: 'Обои',
+        openings: 'Двери и окна',
+        explanation: 'Как получился результат',
+      },
+      errors: {
+        generic: 'Не удалось поделиться. Попробуйте ещё раз.',
+        unavailable: 'На этом устройстве обмен недоступен.',
+        pdfFailed: 'Не удалось создать PDF. Попробуйте ещё раз.',
+        halfDropBlocked:
+          'Для рисунка со смещением отчёт пока недоступен — числовой расчёт для него ещё не поддерживается.',
+      },
+      status: {
+        generatingPdf: 'Готовим PDF…',
+      },
+    },
     explanation: {
       toggleLabel: 'Как мы это посчитали?',
       toggleHintCollapsed: 'Нажмите, чтобы раскрыть пояснение',

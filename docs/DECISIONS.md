@@ -509,3 +509,23 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Measure real usage before monetization UI; keep UI provider-agnostic for future calculator apps.
 
 **Consequences:** Native rebuild required for AppMetrica on device. Share/PDF remain Phase 5B. `react-dom` is pinned to the same version as `react` so normal `npm install` / `npm ci` resolve Expo's optional web peer reproducibly without `--legacy-peer-deps`.
+
+---
+
+## 2026-08-20 — System Share Sheet + PDF reports (Phase 5B)
+
+**Status:** Accepted
+
+**Context:** Users need to send calculation results. Russian ecosystem favors installed apps (MAX, email, VK, Telegram, WhatsApp, SMS) without vendor SDKs. Ads must stay separate.
+
+**Decision:**
+1. Build `CalculationReportModel` from presented results + form/draft snapshots — never recalculate.
+2. Text share via React Native `Share`; PDF via `expo-print` HTML → cache file → `expo-sharing`.
+3. Cyrillic via UTF-8 HTML + Android system fonts (Roboto/Noto).
+4. Analytics: sheet-open / PDF lifecycle events only; **no `share_completed`**.
+5. Share/PDF content is user-requested data; AppMetrica custom params stay categorical only.
+6. Close the in-app share Modal **before** calling `expo-print.printToFileAsync` — on Android a still-open RN Modal can hang PDF generation (WebView conflict). Surface PDF failures with `Alert` after dismiss.
+
+**Why:** Minimal native surface (Expo modules), CNG-friendly, privacy-safe telemetry, truthful Quick vs Precise wording.
+
+**Consequences:** Development build needs modules `expo-print`, `expo-sharing`, `expo-file-system`. Half-drop remains non-numeric. PDF UX closes the chooser before generation completes.

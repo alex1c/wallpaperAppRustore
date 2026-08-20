@@ -1,6 +1,7 @@
 import { getAdService } from './ads'
 import { getAnalyticsService } from './analytics'
 import { getPersistenceService } from './persistence'
+import { getShareService } from './sharing'
 
 let initialized = false
 
@@ -17,9 +18,10 @@ export function initializeAppServices(): void {
   analytics.initialize()
   analytics.track('app_open')
 
-  // Ads remain noop in Phase 5A — preload stays a no-op call for API stability.
+  // Ads remain noop in Phase 5B — preload stays a no-op call for API stability.
   void getAdService().preloadInterstitial()
   void getPersistenceService()
+  void getShareService()
 
   initialized = true
 }
@@ -32,6 +34,7 @@ export function resetAppServicesInitializationForTests(): void {
 export { getAdService, setAdService } from './ads'
 export { getAnalyticsService, setAnalyticsService } from './analytics'
 export { getPersistenceService, setPersistenceService } from './persistence'
+export { getShareService, setShareService } from './sharing'
 
 export type { AdService, AdShowResult, RewardedAdResult } from './ads'
 export type {
@@ -40,3 +43,4 @@ export type {
   AnalyticsService,
 } from './analytics'
 export type { PersistenceService } from './persistence'
+export type { ShareService, ShareOutcome, PdfGenerationOutcome } from './sharing'

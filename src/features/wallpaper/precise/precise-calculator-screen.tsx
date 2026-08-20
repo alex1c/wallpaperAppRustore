@@ -16,6 +16,10 @@ import { calculatePreciseWallpaper } from '@/domain/wallpaper'
 import { DimensionField } from '@/features/wallpaper/components/dimension-field'
 import { PatternRefinementSheet } from '@/features/wallpaper/components/pattern-refinement-sheet'
 import { RollPresetSelector } from '@/features/wallpaper/components/roll-preset-selector'
+import { ShareCalculationButton } from '@/features/wallpaper/components/share-calculation-button'
+import { ShareCalculationSheet } from '@/features/wallpaper/components/share-calculation-sheet'
+import { buildPreciseCalculationReport } from '@/features/wallpaper/report'
+import type { CalculationReportModel } from '@/features/wallpaper/report'
 import { OpeningFormSheet } from '@/features/wallpaper/precise/components/opening-form-sheet'
 import { PreciseOpeningsSection } from '@/features/wallpaper/precise/components/precise-openings-section'
 import { PreciseResult } from '@/features/wallpaper/precise/components/precise-result'
@@ -75,6 +79,8 @@ export function PreciseCalculatorScreen() {
   const [domainErrorMessage, setDomainErrorMessage] = useState<string | null>(null)
   const [unsupportedPatternMessage, setUnsupportedPatternMessage] = useState<string | null>(null)
   const [presentedResult, setPresentedResult] = useState<PresentedPreciseWallpaperResult | null>(null)
+  const [shareSheetVisible, setShareSheetVisible] = useState(false)
+  const [shareReport, setShareReport] = useState<CalculationReportModel | null>(null)
   const [explanationExpanded, setExplanationExpanded] = useState(false)
 
   const [rollSheetVisible, setRollSheetVisible] = useState(false)
@@ -96,7 +102,10 @@ export function PreciseCalculatorScreen() {
 
   const invalidateResult = useCallback(() => {
     invalidatePreciseCalculation({
-      clearPresentedResult: () => setPresentedResult(null),
+      clearPresentedResult: () => {
+        setPresentedResult(null)
+        setShareReport(null)
+      },
       collapseExplanation: () => setExplanationExpanded(false),
       clearFieldErrors: () => setFieldErrors({}),
       clearDomainError: () => setDomainErrorMessage(null),
@@ -172,14 +181,17 @@ export function PreciseCalculatorScreen() {
       return
     }
 
-    setPresentedResult(
-      presentPreciseWallpaperResult(
-        outcome.result,
-        draft.walls,
-        draft.openings,
-        locale,
-      ),
+    const presented = presentPreciseWallpaperResult(
+      outcome.result,
+      draft.walls,
+      draft.openings,
+      locale,
     )
+    setPresentedResult(presented)
+    setShareReport(buildPreciseCalculationReport({
+      presented,
+      draft,
+    }))
 
     analytics.track('precise_calculation_completed', {
       pattern: mapPatternForAnalytics(draft.pattern?.matchType),
@@ -396,11 +408,26 @@ export function PreciseCalculatorScreen() {
             </Pressable>
 
             {presentedResult ? (
-              <PreciseResult
-                explanationExpanded={explanationExpanded}
-                onToggleExplanation={handleToggleExplanation}
-                result={presentedResult}
-              />
+              <>
+                <PreciseResult
+                  explanationExpanded={explanationExpanded}
+                  onToggleExplanation={handleToggleExplanation}
+                  result={presentedResult}
+                />
+                <ShareCalculationButton
+                  onPress={() => {
+                    if (!shareReport) {
+                      return
+                    }
+                    getAnalyticsService().track('share_opened', {
+                      mode: 'precise',
+                      pattern: mapPatternForAnalytics(draft.pattern?.matchType),
+                      has_openings: draft.openings.length > 0,
+                    })
+                    setShareSheetVisible(true)
+                  }}
+                />
+              </>
             ) : null}
           </ScrollView>
         </KeyboardAvoidingView>
@@ -479,6 +506,12 @@ export function PreciseCalculatorScreen() {
         opening={editingOpening}
         visible={openingSheetVisible}
         walls={draft.walls}
+      />
+
+      <ShareCalculationSheet
+        onClose={() => setShareSheetVisible(false)}
+        report={shareReport}
+        visible={shareSheetVisible}
       />
     </>
   )

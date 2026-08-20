@@ -23,6 +23,10 @@ import { PatternEntryCard } from '@/features/wallpaper/components/pattern-entry-
 import { PatternRefinementSheet } from '@/features/wallpaper/components/pattern-refinement-sheet'
 import { PreciseEntryCard } from '@/features/wallpaper/components/precise-entry-card'
 import { RollPresetSelector } from '@/features/wallpaper/components/roll-preset-selector'
+import { ShareCalculationButton } from '@/features/wallpaper/components/share-calculation-button'
+import { ShareCalculationSheet } from '@/features/wallpaper/components/share-calculation-sheet'
+import { buildQuickCalculationReport } from '@/features/wallpaper/report'
+import type { CalculationReportModel } from '@/features/wallpaper/report'
 import { buildPreciseDraftFromQuickForm } from '@/features/wallpaper/precise/input/build-precise-draft-from-quick'
 import { setPendingPreciseDraft } from '@/features/wallpaper/precise/state/precise-draft-store'
 import {
@@ -66,6 +70,9 @@ export function WallpaperCalculatorScreen() {
   const [fieldErrors, setFieldErrors] = useState<QuickFormFieldErrors>({})
   const [domainErrorMessage, setDomainErrorMessage] = useState<string | null>(null)
   const [presentedResult, setPresentedResult] = useState<PresentedWallpaperResult | null>(null)
+  const [appliedPattern, setAppliedPattern] = useState<PatternFormValues | null>(null)
+  const [shareSheetVisible, setShareSheetVisible] = useState(false)
+  const [shareReport, setShareReport] = useState<CalculationReportModel | null>(null)
   const [explanationExpanded, setExplanationExpanded] = useState(false)
   const [patternSheetVisible, setPatternSheetVisible] = useState(false)
   const [resultScrollY, setResultScrollY] = useState(0)
@@ -93,6 +100,8 @@ export function WallpaperCalculatorScreen() {
   const updateField = useCallback((key: keyof typeof formValues, value: string) => {
     setFormValues((current) => ({ ...current, [key]: value }))
     setPresentedResult(null)
+    setAppliedPattern(null)
+    setShareReport(null)
     setExplanationExpanded(false)
     setFieldErrors((current) => {
       if (!(key in current)) {
@@ -115,6 +124,8 @@ export function WallpaperCalculatorScreen() {
   const handlePresetSelect = useCallback((presetId: WallpaperRollPresetId) => {
     setFormValues((current) => ({ ...current, rollPresetId: presetId }))
     setPresentedResult(null)
+    setAppliedPattern(null)
+    setShareReport(null)
     setExplanationExpanded(false)
     setDomainErrorMessage(null)
     setFieldErrors((current) => {
@@ -169,7 +180,7 @@ export function WallpaperCalculatorScreen() {
 
   const runCalculation = (
     parsedInput: import('@/domain/wallpaper').QuickWallpaperCalculationInput,
-    options?: { fromPatternSheet?: boolean },
+    options?: { fromPatternSheet?: boolean; patternValues?: PatternFormValues | null },
   ) => {
     const analytics = getAnalyticsService()
     const pattern = mapPatternForAnalytics(parsedInput.pattern?.match)
@@ -199,7 +210,14 @@ export function WallpaperCalculatorScreen() {
       locale,
     )
 
+    const nextPattern = options?.patternValues ?? null
+    setAppliedPattern(nextPattern)
     setPresentedResult(presented)
+    setShareReport(buildQuickCalculationReport({
+      presented,
+      form: formValues,
+      pattern: nextPattern,
+    }))
 
     const resultBucket = bucketResultRolls(outcome.result.minimumRolls)
     analytics.track('quick_calculation_completed', {
@@ -221,6 +239,8 @@ export function WallpaperCalculatorScreen() {
     Keyboard.dismiss()
     setDomainErrorMessage(null)
     setPresentedResult(null)
+    setAppliedPattern(null)
+    setShareReport(null)
     setExplanationExpanded(false)
 
     const parsed = parseQuickCalculationForm(formValues)
@@ -248,6 +268,8 @@ export function WallpaperCalculatorScreen() {
     Keyboard.dismiss()
     setDomainErrorMessage(null)
     setPresentedResult(null)
+    setAppliedPattern(null)
+    setShareReport(null)
     setExplanationExpanded(false)
 
     const parsed = parseQuickCalculationForm(formValues)
@@ -278,11 +300,14 @@ export function WallpaperCalculatorScreen() {
     setFieldErrors({})
     runCalculation(withPatternInput(parsed.input, patternParsed.pattern), {
       fromPatternSheet: true,
+      patternValues,
     })
   }
 
   const invalidatePresentedCalculation = useCallback(() => {
     setPresentedResult(null)
+    setAppliedPattern(null)
+    setShareReport(null)
     setExplanationExpanded(false)
     setDomainErrorMessage(null)
   }, [
@@ -290,6 +315,19 @@ export function WallpaperCalculatorScreen() {
     setExplanationExpanded,
     setPresentedResult,
   ])
+
+  const handleOpenShareSheet = () => {
+    if (!presentedResult || !shareReport) {
+      return
+    }
+
+    getAnalyticsService().track('share_opened', {
+      mode: 'quick',
+      pattern: mapPatternForAnalytics(appliedPattern?.matchType),
+      has_openings: false,
+    })
+    setShareSheetVisible(true)
+  }
 
   const handleOpenPreciseMode = () => {
     const draft = buildPreciseDraftFromQuickForm(formValues)
@@ -440,6 +478,7 @@ export function WallpaperCalculatorScreen() {
                   onToggleExplanation={handleToggleExplanation}
                   result={presentedResult}
                 />
+                <ShareCalculationButton onPress={handleOpenShareSheet} />
               </View>
             ) : null}
 
@@ -455,6 +494,12 @@ export function WallpaperCalculatorScreen() {
         onClose={() => setPatternSheetVisible(false)}
         onDraftChange={invalidatePresentedCalculation}
         visible={patternSheetVisible}
+      />
+
+      <ShareCalculationSheet
+        onClose={() => setShareSheetVisible(false)}
+        report={shareReport}
+        visible={shareSheetVisible}
       />
     </>
   )

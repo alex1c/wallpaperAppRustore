@@ -15,7 +15,11 @@ export type OpeningTypeAnalyticsValue = 'door' | 'window'
 export type WallCountBucket = '1_2' | '3_4' | '5_plus'
 export type OpeningCountBucket = '0' | '1' | '2' | '3_plus'
 export type ResultRollBucket = '1' | '2' | '3_5' | '6_10' | '11_plus'
-export type AnalyticsErrorCategory = 'validation' | 'unsupported' | 'calculation'
+export type AnalyticsErrorCategory =
+	| 'validation'
+	| 'unsupported'
+	| 'calculation'
+	| 'technical'
 export type PatternBlockReason = 'half_drop' | 'straight_with_openings' | 'validation'
 
 /**
@@ -75,6 +79,37 @@ export interface AnalyticsEventMap {
     wall_count_bucket: WallCountBucket
   }
   precise_to_quick: undefined
+  /** User opened the share action sheet after a valid calculation. */
+  share_opened: {
+    mode: ModeAnalyticsValue
+    pattern: PatternAnalyticsValue
+    has_openings: boolean
+  }
+  /** System text share sheet was presented. */
+  text_share_sheet_opened: {
+    mode: ModeAnalyticsValue
+    pattern: PatternAnalyticsValue
+  }
+  pdf_generation_started: {
+    mode: ModeAnalyticsValue
+    pattern: PatternAnalyticsValue
+    has_openings: boolean
+  }
+  pdf_generation_completed: {
+    mode: ModeAnalyticsValue
+    pattern: PatternAnalyticsValue
+    has_openings: boolean
+  }
+  pdf_generation_failed: {
+    mode: ModeAnalyticsValue
+    pattern: PatternAnalyticsValue
+    error_category: AnalyticsErrorCategory
+  }
+  /** System PDF share sheet was presented — not proof of send completion. */
+  pdf_share_sheet_opened: {
+    mode: ModeAnalyticsValue
+    pattern: PatternAnalyticsValue
+  }
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventMap
@@ -87,19 +122,10 @@ export type AnalyticsPrimitive = string | number | boolean
 export type AnalyticsParams = Record<string, AnalyticsPrimitive>
 
 /**
- * Future Share / PDF events (Phase 5B) — documented contract only.
- * Do not fire these until Share Sheet / PDF is implemented.
+ * Share / PDF events are implemented in Phase 5B.
  *
- * Planned:
- * - share_tapped
- * - share_sheet_opened
- * - share_completed — only if the platform reports a reliable success signal
- * - share_cancelled — only if reliably detectable
- * - pdf_created
- * - pdf_share_started
- *
- * Android ACTION_SEND / system Share Sheet often cannot confirm destination
- * completion; prefer sheet-open + optional OS result when available.
+ * Do NOT fire `share_completed`: Android system Share Sheet usually cannot
+ * prove the user actually sent the message/file to a destination.
  */
 
 /**

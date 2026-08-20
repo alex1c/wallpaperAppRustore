@@ -65,16 +65,22 @@ AppMetrica’s native SDK may collect device/network/session technical data acco
 
 ## Advertising
 
-**NOT IMPLEMENTED in Phase 5A.** No ad SDKs, placements, or fake ad events.
+**NOT IMPLEMENTED in Phase 5A/5B.** No ad SDKs, placements, or fake ad events.
 
-## Future Share / PDF (Phase 5B)
+## Share / PDF (Phase 5B)
 
-Prefer the **standard Android system Share Sheet** (`ACTION_SEND`) so installed apps are offered automatically (MAX, email, VK/VK Messenger, Telegram, WhatsApp, SMS, Nearby, etc. when present).
+Implemented — see `docs/SHARING_AND_REPORTS.md`.
 
-- Do **not** add dedicated Telegram/WhatsApp/MAX buttons or vendor chat SDKs for sharing.
-- PDF / shareable artifact format is exploratory.
-- Planned events (not fired yet): `share_tapped`, `share_sheet_opened`, `share_completed` / `share_cancelled` only when OS signals are reliable, `pdf_created`, `pdf_share_started`.
-- Android often cannot confirm the destination completed the share — document and avoid fake completion events.
+Events:
+
+- `share_opened`
+- `text_share_sheet_opened`
+- `pdf_generation_started` / `pdf_generation_completed` / `pdf_generation_failed`
+- `pdf_share_sheet_opened`
+
+**No `share_completed`** — Android Share Sheet open is not proof of send.
+
+Custom params remain categorical (`mode`, `pattern`, `has_openings`, `error_category`). Report bodies never enter analytics.
 
 ## Native rebuild
 

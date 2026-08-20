@@ -78,16 +78,15 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Native + AppMetrica console verified (custom events visible)
 - **No advertising** in this phase
 
-## Phase 5B — Share calculation (next)
+## Phase 5B — Share + PDF (current)
 
-- «Поделиться расчётом» using the **standard Android Share Sheet** (`ACTION_SEND`)
-- Russian-ecosystem friendly: MAX, email, VK, Telegram, WhatsApp, SMS / other installed targets
-- Human-readable text share first; PDF/report exploration
-- No dedicated Telegram/WhatsApp/MAX chat SDK buttons
-- Analytics events only when OS signals are reliable
-- Advertising remains later and separate (Phase 6)
+- «Поделиться расчётом» via **standard Android Share Sheet** (`ACTION_SEND` / Expo Sharing)
+- Text result + detailed PDF report (`expo-print`)
+- Russian-ecosystem friendly: MAX, email, VK, Telegram, WhatsApp, SMS when installed
+- Spec: `docs/SHARING_AND_REPORTS.md`
+- **No advertising** — ads remain Phase 5C / Phase 6
 
-## Phase 6 — Ads & monetization (future)
+## Phase 5C / Phase 6 — Ads & monetization (future)
 
 - Yandex Mobile Ads + mediation (RSЯ, VK Ads) — after usage data from 5A
 - AppMetrica already available for product analytics
@@ -134,4 +133,4 @@ See Phase 6 — careful placements; rewarded only for extras; never block basic 
 
 ---
 
-**Current focus:** Phase 5B — Share calculation. Do not start ads until usage data from 5A exists.
+**Current focus:** Phase 5B — Share + PDF. Do not start ads until usage data from 5A exists.

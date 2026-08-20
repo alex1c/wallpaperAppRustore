@@ -143,6 +143,34 @@ describe('product event instrumentation contract', () => {
     })
     recording.track('explanation_opened', { mode: 'precise' })
     recording.track('precise_to_quick')
+    recording.track('share_opened', {
+      mode: 'quick',
+      pattern: 'free',
+      has_openings: false,
+    })
+    recording.track('text_share_sheet_opened', {
+      mode: 'quick',
+      pattern: 'free',
+    })
+    recording.track('pdf_generation_started', {
+      mode: 'precise',
+      pattern: 'straight',
+      has_openings: true,
+    })
+    recording.track('pdf_generation_completed', {
+      mode: 'precise',
+      pattern: 'straight',
+      has_openings: true,
+    })
+    recording.track('pdf_generation_failed', {
+      mode: 'precise',
+      pattern: 'free',
+      error_category: 'calculation',
+    })
+    recording.track('pdf_share_sheet_opened', {
+      mode: 'precise',
+      pattern: 'straight',
+    })
 
     for (const call of recording.calls) {
       if (call.kind === 'track') {
@@ -158,7 +186,11 @@ describe('product event instrumentation contract', () => {
       'opening_added',
       'explanation_opened',
       'precise_to_quick',
+      'share_opened',
+      'pdf_generation_completed',
+      'pdf_share_sheet_opened',
     ]))
+    expect(recording.trackedNames()).not.toContain('share_completed')
     expect(recording.calls.filter((call) => call.kind === 'screen')).toEqual([
       { kind: 'screen', name: 'quick_calculator' },
       { kind: 'screen', name: 'precise_calculator' },
