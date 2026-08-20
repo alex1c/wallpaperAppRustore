@@ -1,5 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { formatWallLabel } from '@/features/wallpaper/precise/presenter/present-precise-wallpaper-result'
+import {
+  formatOpeningSummaryLine,
+  formatWallLabel,
+} from '@/features/wallpaper/precise/presenter/present-precise-wallpaper-result'
 import type {
   PreciseOpeningDraft,
   PreciseWallDraft,
@@ -42,6 +45,13 @@ export function PreciseOpeningsSection({
           const kindLabel = opening.kind === 'door'
             ? openingStrings.doorLabel
             : openingStrings.windowLabel
+          const wallLabel = wall ? formatWallLabel(wall, locale) : '—'
+          const sizeSummary = formatOpeningSummaryLine(
+            wallLabel,
+            opening.width,
+            opening.height,
+            locale,
+          )
 
           return (
             <Pressable
@@ -66,15 +76,7 @@ export function PreciseOpeningsSection({
                   <Text style={styles.removeLabel}>{openingStrings.remove}</Text>
                 </Pressable>
               </View>
-              <Text style={styles.openingMeta}>
-                {wall ? formatWallLabel(wall, locale) : '—'}
-                {' · '}
-                {opening.width || '?'}
-                {' × '}
-                {opening.height}
-                {' '}
-                {strings.wallpaper.units.meters}
-              </Text>
+              <Text style={styles.openingMeta}>{sizeSummary}</Text>
             </Pressable>
           )
         })

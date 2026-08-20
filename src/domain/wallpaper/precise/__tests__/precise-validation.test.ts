@@ -158,4 +158,73 @@ describe('precise validation', () => {
     if (outcome.ok) return
     expect(outcome.error.code).toBe('INPUT_OVERFLOW')
   })
+
+  it('accepts a floor door shorter than the wall and keeps wall above it', () => {
+    // Manual review case: 4.0 × 2.7 m wall, 0.8 × 2.0 m door from the floor.
+    const outcome = calculatePreciseWallpaper({
+      walls: [{ id: 'wall-a', widthMm: mm(4000), heightMm: mm(2700) }],
+      openings: [{
+        id: 'door-short',
+        wallId: 'wall-a',
+        offsetXMm: mm(500),
+        offsetFromFloorMm: mm(0),
+        widthMm: mm(800),
+        heightMm: mm(2000),
+      }],
+      roll: P1_INPUT.roll,
+      trim: P1_INPUT.trim,
+    })
+
+    expect(outcome.ok).toBe(true)
+    if (!outcome.ok) return
+
+    expect(outcome.result.openingImpacts[0]?.coverageAreaRemovedMm2).toBe(800 * 2000)
+
+    const segmentsAboveDoor = outcome.result.requiredSegments.filter(
+      (segment) => segment.yStartMm === 2000 && segment.yEndMm === 2700,
+    )
+    expect(segmentsAboveDoor.length).toBeGreaterThan(0)
+    expect(
+      segmentsAboveDoor.every((segment) => segment.wallCoverageLengthMm === 700),
+    ).toBe(true)
+  })
+
+  it('accepts a realistic window on a 2.7 m wall and rejects it on 2.0 m', () => {
+    const windowOpening = {
+      id: 'window-realistic',
+      wallId: 'wall-a' as const,
+      offsetXMm: mm(1000),
+      offsetFromFloorMm: mm(800),
+      widthMm: mm(1500),
+      heightMm: mm(1500),
+    }
+
+    const valid = calculatePreciseWallpaper({
+      walls: [{ id: 'wall-a', widthMm: mm(4000), heightMm: mm(2700) }],
+      openings: [windowOpening],
+      roll: P1_INPUT.roll,
+      trim: P1_INPUT.trim,
+    })
+    expect(valid.ok).toBe(true)
+    if (valid.ok) {
+      const below = valid.result.requiredSegments.some(
+        (segment) => segment.yStartMm === 0 && segment.yEndMm === 800,
+      )
+      const above = valid.result.requiredSegments.some(
+        (segment) => segment.yStartMm === 2300 && segment.yEndMm === 2700,
+      )
+      expect(below).toBe(true)
+      expect(above).toBe(true)
+    }
+
+    const invalid = calculatePreciseWallpaper({
+      walls: [{ id: 'wall-a', widthMm: mm(4000), heightMm: mm(2000) }],
+      openings: [windowOpening],
+      roll: P1_INPUT.roll,
+      trim: P1_INPUT.trim,
+    })
+    expect(invalid.ok).toBe(false)
+    if (invalid.ok) return
+    expect(invalid.error.code).toBe('OPENING_OUTSIDE_WALL')
+  })
 })

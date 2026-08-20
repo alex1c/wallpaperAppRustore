@@ -8,6 +8,18 @@ import {
 import { calculateQuickWallpaper } from '@/domain/wallpaper'
 
 describe('parseQuickCalculationForm', () => {
+  it('defaults Quick room height to 2,7 m', () => {
+    expect(DEFAULT_QUICK_FORM_VALUES.roomLength).toBe('4')
+    expect(DEFAULT_QUICK_FORM_VALUES.roomWidth).toBe('3')
+    expect(DEFAULT_QUICK_FORM_VALUES.roomHeight).toBe('2,7')
+
+    const outcome = parseQuickCalculationForm(DEFAULT_QUICK_FORM_VALUES)
+
+    expect(outcome.ok).toBe(true)
+    if (!outcome.ok) return
+    expect(outcome.input.room.heightMm).toBe(2700)
+  })
+
   it('parses room comma decimals and custom roll width/length in meters', () => {
     const outcome = parseQuickCalculationForm({
       ...DEFAULT_QUICK_FORM_VALUES,

@@ -11,7 +11,9 @@ import {
   type PresentedPreciseExplanationStep,
 } from './build-precise-explanation-steps'
 import {
+  formatCentimetersTextForDisplay,
   formatCount,
+  formatDimensionTextForDisplay,
   formatMetersFromMm,
   formatSquareMetersFromMm2,
   interpolateTemplate,
@@ -295,16 +297,35 @@ export function formatWallLabel(wall: PreciseWallDraft, locale: SupportedLocale)
   })
 }
 
+/**
+ * Read-only opening card meta line.
+ * Example RU: «Стена 1 · 0,8 × 2 м» (even when draft text used dots).
+ */
+export function formatOpeningSummaryLine(
+  wallLabel: string,
+  widthRaw: string,
+  heightRaw: string,
+  locale: SupportedLocale,
+): string {
+  const strings = t()
+  const width = formatDimensionTextForDisplay(widthRaw, locale) || '?'
+  const height = formatDimensionTextForDisplay(heightRaw, locale) || '?'
+  return `${wallLabel} · ${width} × ${height} ${strings.wallpaper.units.meters}`
+}
+
 /** Formats roll summary line from preset id and custom dimensions. */
 export function formatRollSummaryLabel(
   presetId: import('@/config/wallpaper-roll-presets').WallpaperRollPresetId,
   rollWidth: string,
   rollLength: string,
+  locale: SupportedLocale = 'ru',
 ): string {
   const strings = t()
 
   if (presetId === 'custom') {
-    return `${rollWidth} × ${rollLength} ${strings.wallpaper.units.meters}`
+    const width = formatDimensionTextForDisplay(rollWidth, locale) || rollWidth
+    const length = formatDimensionTextForDisplay(rollLength, locale) || rollLength
+    return `${width} × ${length} ${strings.wallpaper.units.meters}`
   }
 
   if (presetId === 'narrow-530') {
@@ -312,6 +333,16 @@ export function formatRollSummaryLabel(
   }
 
   return strings.wallpaper.rollPresets.labels.wide1060
+}
+
+/** Locale-aware pattern repeat fragment for wallpaper config summary. */
+export function formatPatternRepeatSummary(
+  repeatCm: string,
+  locale: SupportedLocale,
+): string {
+  const strings = t()
+  const formatted = formatCentimetersTextForDisplay(repeatCm, locale) || repeatCm
+  return `${formatted} ${strings.wallpaper.units.centimeters}`
 }
 
 export { formatMetersFromMm }

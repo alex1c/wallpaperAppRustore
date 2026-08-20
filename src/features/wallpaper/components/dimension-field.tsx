@@ -24,8 +24,9 @@ interface DimensionFieldProps {
 
 /**
  * Labeled numeric input with unit suffix and inline validation message.
- * Stores raw user-editable string; parsing happens on submit only. Input mode
- * affects the soft keyboard, not the value, so invalid paste remains fixable.
+ * Stores raw user-editable string; parsing happens on submit only. Soft-keyboard
+ * props come from {@link getDecimalTextInputProps} so Android accepts locale
+ * commas; malformed paste remains visible for correction.
  */
 export function DimensionField({
   label,

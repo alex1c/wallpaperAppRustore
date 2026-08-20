@@ -9,6 +9,11 @@ describe('filterDecimalInputText', () => {
     expect(filterDecimalInputText('3,25')).toBe('3,25')
   })
 
+  it('preserves incomplete trailing separators such as 2. without mutation', () => {
+    expect(filterDecimalInputText('2.')).toBe('2.')
+    expect(filterDecimalInputText('2,')).toBe('2,')
+  })
+
   it('preserves dot separator', () => {
     expect(filterDecimalInputText('4.5')).toBe('4.5')
   })

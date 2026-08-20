@@ -11,11 +11,11 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 4B2 — Precise Mode UX** (complete, pending commit)
+**Phase 4B2 — Precise Mode UX** ✅ complete
 
 Phase 4B1 committed at `7b25e30`. Phase 4B2 adds `/precise` screen — walls, doors/windows, wall preview, result presenter with «По расчётному раскрою» wording, Quick → Precise handoff, separate pattern entry card.
 
-**Do NOT implement** half-drop calculation, persistence, ads, or RuStore release in this phase.
+**Do NOT implement** half-drop calculation, persistence, ads, or RuStore release until a later roadmap phase.
 
 ## Tech stack (pinned at project creation)
 

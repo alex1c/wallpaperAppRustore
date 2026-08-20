@@ -1,7 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { formatRollSummaryLabel } from '@/features/wallpaper/precise/presenter/present-precise-wallpaper-result'
+import {
+  formatPatternRepeatSummary,
+  formatRollSummaryLabel,
+} from '@/features/wallpaper/precise/presenter/present-precise-wallpaper-result'
 import type { PreciseDraft } from '@/features/wallpaper/precise/state/precise-draft-types'
-import { t } from '@/i18n'
+import { getLocale, t } from '@/i18n'
 import { colors, radii, spacing, typography } from '@/theme'
 
 interface WallpaperConfigSummaryProps {
@@ -17,18 +20,20 @@ export function WallpaperConfigSummary({
   onChangePattern,
 }: WallpaperConfigSummaryProps) {
   const strings = t()
+  const locale = getLocale()
   const wallpaperStrings = strings.wallpaper.precise.wallpaper
   const rollLabel = formatRollSummaryLabel(
     draft.rollPresetId,
     draft.rollWidth,
     draft.rollLength,
+    locale,
   )
 
   const patternLabel = draft.pattern === null
     ? wallpaperStrings.noPattern
     : draft.pattern.matchType === 'free'
       ? strings.wallpaper.pattern.options.free.title
-      : `${strings.wallpaper.pattern.options.straight.title}${draft.pattern.repeatCm ? ` · ${draft.pattern.repeatCm} ${strings.wallpaper.units.centimeters}` : ''}`
+      : `${strings.wallpaper.pattern.options.straight.title}${draft.pattern.repeatCm ? ` · ${formatPatternRepeatSummary(draft.pattern.repeatCm, locale)}` : ''}`
 
   return (
     <View style={styles.card}>

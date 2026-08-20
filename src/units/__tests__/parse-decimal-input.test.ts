@@ -66,6 +66,34 @@ describe('parseMetersInputToMillimeters', () => {
     expect(parseMetersInputToMillimeters('2 7').ok).toBe(false)
   })
 
+  it('rejects incomplete trailing decimal separators without inventing a number', () => {
+    // Intermediate editable text such as "2." / "2," must stay visible while typing;
+    // submit-time parse rejects it instead of silently coercing to 2.
+    expect(parseMetersInputToMillimeters('2.')).toEqual({
+      ok: false,
+      code: 'INVALID_FORMAT',
+    })
+    expect(parseMetersInputToMillimeters('2,')).toEqual({
+      ok: false,
+      code: 'INVALID_FORMAT',
+    })
+  })
+
+  it('rejects mixed or doubled separators that look almost valid', () => {
+    expect(parseMetersInputToMillimeters('3,,2')).toEqual({
+      ok: false,
+      code: 'INVALID_FORMAT',
+    })
+    expect(parseMetersInputToMillimeters('3..2')).toEqual({
+      ok: false,
+      code: 'INVALID_FORMAT',
+    })
+    expect(parseMetersInputToMillimeters('3,2.5')).toEqual({
+      ok: false,
+      code: 'INVALID_FORMAT',
+    })
+  })
+
   it('rejects empty input', () => {
     expect(parseMetersInputToMillimeters('').ok).toBe(false)
     expect(parseMetersInputToMillimeters('   ').ok).toBe(false)

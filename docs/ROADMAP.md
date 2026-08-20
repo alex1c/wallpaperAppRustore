@@ -54,12 +54,14 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Mixed wall heights; reference scenarios P1–P10; property invariants
 - Spec: `docs/WALLPAPER_PRECISE_GEOMETRY_SPEC.md`
 
-## Phase 4B2 — Precise Mode UX (current)
+## Phase 4B2 — Precise Mode UX ✅
 
 - Route `/precise` — walls, doors/windows, wall preview sketch
 - Quick → Precise draft handoff; separate pattern vs precise entry cards
 - Presenter: planned-roll wording, opening impacts, comparison copy
 - Straight + openings blocked in UI before domain call
+- Android decimal UX: parser accepts `,` and `.`; soft keyboard may use `.`
+- RU summaries display meters with locale comma
 
 ## Phase 4B3+ — Remaining precise scope
 
@@ -100,4 +102,28 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ---
 
-**Current focus:** Phase 4B2 Precise Mode UX on committed Phase 4B1 geometry engine.
+## Deferred product explorations
+
+Not scheduled implementation — capture only, so Phase 4B2 stay closed without Phase 5 leakage.
+
+### Share calculation
+
+Future UX exploration:
+
+- «Поделиться расчётом» action after a successful calculation
+- Shareable human-readable result (inputs + result + explanation)
+- Prefer native share sheet; PDF or another artifact is exploratory, not decided
+- Must not block the basic calculation flow
+
+### Monetization
+
+Future product exploration:
+
+- Careful in-app ad placements
+- Rewarded ads may unlock extras such as export/share
+- Never gate the core wallpaper calculation behind ads
+- Concrete ad model chosen only after dedicated UX/monetization review
+
+---
+
+**Current focus:** Phase 4B2 closed. Next roadmap candidates are Phase 4B3+ precise leftovers or Phase 5 ads/analytics — choose explicitly before starting work.

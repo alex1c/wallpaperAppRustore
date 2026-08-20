@@ -165,21 +165,19 @@ export const en: TranslationTree = {
       calculate: 'Calculate with pattern',
       cancel: 'Cancel',
       halfDropDeferred:
-        'Half-drop calculation is not available yet — we will not show an inaccurate result. See the label helper for 64/32 notation.',
+        'Offset pattern calculation is not available yet — we will not show an inaccurate result. See the label helper for 64/32 notation.',
       options: {
         free: {
-          title: 'No pattern matching',
-          description: 'Strips can be cut one after another without aligning the pattern.',
+          title: 'No need to match the pattern',
+          description: 'One strip can be cut right after another.',
         },
         straight: {
-          title: 'Pattern repeats evenly',
-          description: 'Neighbouring strips align at the same height.',
-          hint: 'Straight match',
+          title: 'Pattern needs to be matched',
+          description: 'The pattern on neighbouring strips must sit at the same height.',
         },
         'half-drop': {
-          title: 'Pattern shifts every other strip',
-          description: 'Each next strip must be offset to match the pattern.',
-          hint: 'Half-drop match',
+          title: 'Pattern with offset',
+          description: 'Each next strip is hung with a pattern shift.',
         },
       },
     },

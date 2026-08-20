@@ -473,3 +473,20 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Per-wall model is the foundation for Precise Mode.
 
 **Consequences:** P6 regression confirms precise success + Quick still returns `UNSUPPORTED_DIFFERENT_WALL_HEIGHTS`.
+
+---
+
+## 2026-08-20 — Android decimal entry vs RU display (Phase 4B2)
+
+**Status:** Accepted
+
+**Context:** Android `inputMode="decimal"` / `decimal-pad` maps to a number input type that rejects locale commas before `onChangeText`. Human review preferred a reliable keyboard with `.` over forcing a comma key.
+
+**Decision:**
+1. Soft keyboard may enter decimals with `.` on Android; parser continues to accept both `.` and `,` (including paste).
+2. Editable draft text is not silently rewritten.
+3. Read-only RU summaries format valid meter dimensions with a locale comma via presenter helpers (`formatDimensionTextForDisplay` / `formatOpeningSummaryLine`).
+
+**Why:** Avoid another keyboard experiment in Phase 4B2; keep parsing honest and display culturally correct for RuStore.
+
+**Consequences:** Opening cards show `0,8 × 2 м` even when the draft string used dots. Malformed text stays visible and fails only at submit.

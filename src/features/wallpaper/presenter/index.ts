@@ -2,8 +2,11 @@ export { buildExplanationSteps } from './build-explanation-steps'
 export type { PresentedExplanationStep } from './build-explanation-steps'
 export {
   formatCentimetersFromMm,
+  formatCentimetersTextForDisplay,
   formatCount,
+  formatDimensionTextForDisplay,
   formatMetersFromMm,
+  formatMetersNumberFromMm,
   interpolateTemplate,
 } from './format-length'
 export {

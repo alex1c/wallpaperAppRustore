@@ -10,7 +10,7 @@ import {
   SCENARIO_B_EXPECTED,
 } from '@/domain/wallpaper/fixtures/reference-scenarios'
 import { buildExplanationSteps } from '@/features/wallpaper/presenter/build-explanation-steps'
-import { setLocale } from '@/i18n'
+import { setLocale, t } from '@/i18n'
 
 describe('parsePatternForm', () => {
   it('converts straight repeat 64 cm to 640 mm', () => {
@@ -57,6 +57,23 @@ describe('parsePatternForm', () => {
     if (outcome.ok || !('halfDropDeferred' in outcome)) return
 
     expect(outcome.halfDropDeferred).toBe(true)
+  })
+
+  it('maps human-first RU labels to the same domain match ids', () => {
+    setLocale('ru')
+    const strings = t()
+
+    expect(strings.wallpaper.pattern.options.free.title).toBe('Рисунок совмещать не нужно')
+    expect(strings.wallpaper.pattern.options.straight.title).toBe('Рисунок нужно совмещать')
+    expect(strings.wallpaper.pattern.options['half-drop'].title).toBe('Рисунок со смещением')
+
+    expect(parsePatternForm({ matchType: 'free', repeatCm: '' }).ok).toBe(true)
+    expect(parsePatternForm({ matchType: 'straight', repeatCm: '64' }).ok).toBe(true)
+
+    const halfDrop = parsePatternForm({ matchType: 'half-drop', repeatCm: '64' })
+    expect(halfDrop.ok).toBe(false)
+    if (halfDrop.ok || !('halfDropDeferred' in halfDrop)) return
+    expect(halfDrop.halfDropDeferred).toBe(true)
   })
 })
 
