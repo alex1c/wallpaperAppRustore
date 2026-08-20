@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -33,7 +33,10 @@ import {
   presentPreciseWallpaperResult,
   type PresentedPreciseWallpaperResult,
 } from '@/features/wallpaper/precise/presenter/present-precise-wallpaper-result'
-import { consumePendingPreciseDraft } from '@/features/wallpaper/precise/state/precise-draft-store'
+import {
+  consumePendingPreciseDraft,
+  hasPendingPreciseDraft,
+} from '@/features/wallpaper/precise/state/precise-draft-store'
 import { invalidatePreciseCalculation } from '@/features/wallpaper/precise/state/invalidate-precise-calculation'
 import type {
   PreciseDraft,
@@ -45,6 +48,15 @@ import {
 } from '@/features/wallpaper/input/parse-pattern-form'
 import { mapDomainErrorToMessageKey } from '@/features/wallpaper/presenter'
 import { getLocale, t } from '@/i18n'
+import {
+  bucketOpeningCount,
+  bucketResultRolls,
+  bucketWallCount,
+  getAnalyticsService,
+  mapOpeningTypeForAnalytics,
+  mapPatternForAnalytics,
+  mapRollPresetForAnalytics,
+} from '@/services/analytics'
 import { colors, radii, spacing, typography } from '@/theme'
 
 /**
@@ -55,7 +67,9 @@ export function PreciseCalculatorScreen() {
   const locale = getLocale()
   const router = useRouter()
   const scrollRef = useRef<ScrollView>(null)
-
+  const [handoffSource] = useState<'quick_entry' | 'direct'>(() => (
+    hasPendingPreciseDraft() ? 'quick_entry' : 'direct'
+  ))
   const [draft, setDraft] = useState<PreciseDraft>(() => consumePendingPreciseDraft())
   const [fieldErrors, setFieldErrors] = useState<PreciseFormFieldErrors>({})
   const [domainErrorMessage, setDomainErrorMessage] = useState<string | null>(null)
@@ -68,6 +82,17 @@ export function PreciseCalculatorScreen() {
   const [openingSheetVisible, setOpeningSheetVisible] = useState(false)
   const [editingOpening, setEditingOpening] = useState<PreciseOpeningDraft | null>(null)
   const [openingFormErrors, setOpeningFormErrors] = useState<PreciseFormFieldErrors>({})
+
+  useEffect(() => {
+    const analytics = getAnalyticsService()
+    analytics.screen('precise_calculator')
+    analytics.track('precise_opened', {
+      source: handoffSource,
+      wall_count_bucket: bucketWallCount(draft.walls.length),
+    })
+    // Intentionally once on mount — wall count is the handoff snapshot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const invalidateResult = useCallback(() => {
     invalidatePreciseCalculation({
@@ -99,20 +124,39 @@ export function PreciseCalculatorScreen() {
     invalidateResult()
     setFieldErrors({})
 
+    const analytics = getAnalyticsService()
     const parsed = parsePreciseCalculationForm(draft)
+    const hasOpenings = draft.openings.length > 0
 
     if (!parsed.ok) {
       if ('unsupportedPatternWithOpenings' in parsed && parsed.unsupportedPatternWithOpenings) {
         setUnsupportedPatternMessage(strings.wallpaper.precise.unsupportedPatternWithOpenings)
+        analytics.track('precise_calculation_failed', {
+          error_category: 'unsupported',
+          has_openings: hasOpenings,
+        })
+        analytics.track('pattern_calculation_blocked', {
+          mode: 'precise',
+          pattern: mapPatternForAnalytics(draft.pattern?.matchType),
+          block_reason: 'straight_with_openings',
+        })
         return
       }
 
       if ('fieldErrors' in parsed && parsed.fieldErrors) {
         setFieldErrors(parsed.fieldErrors)
+        analytics.track('precise_calculation_failed', {
+          error_category: 'validation',
+          has_openings: hasOpenings,
+        })
         return
       }
 
       setDomainErrorMessage(strings.wallpaper.errors.general)
+      analytics.track('precise_calculation_failed', {
+        error_category: 'validation',
+        has_openings: hasOpenings,
+      })
       return
     }
 
@@ -121,6 +165,10 @@ export function PreciseCalculatorScreen() {
     if (!outcome.ok) {
       const messageKey = mapDomainErrorToMessageKey(outcome.error.code)
       setDomainErrorMessage(strings.wallpaper.errors.domain[messageKey])
+      analytics.track('precise_calculation_failed', {
+        error_category: 'calculation',
+        has_openings: hasOpenings,
+      })
       return
     }
 
@@ -132,14 +180,24 @@ export function PreciseCalculatorScreen() {
         locale,
       ),
     )
+
+    analytics.track('precise_calculation_completed', {
+      pattern: mapPatternForAnalytics(draft.pattern?.matchType),
+      roll: mapRollPresetForAnalytics(draft.rollPresetId),
+      has_openings: hasOpenings,
+      wall_count_bucket: bucketWallCount(draft.walls.length),
+      opening_count_bucket: bucketOpeningCount(draft.openings.length),
+      result_roll_bucket: bucketResultRolls(outcome.result.plannedRolls),
+    })
   }
 
   const validateAndSaveOpening = (opening: PreciseOpeningDraft) => {
+    const isNew = !draft.openings.some((entry) => entry.id === opening.id)
     const trialDraft: PreciseDraft = {
       ...draft,
-      openings: draft.openings.some((entry) => entry.id === opening.id)
-        ? draft.openings.map((entry) => (entry.id === opening.id ? opening : entry))
-        : [...draft.openings, opening],
+      openings: isNew
+        ? [...draft.openings, opening]
+        : draft.openings.map((entry) => (entry.id === opening.id ? opening : entry)),
     }
 
     const parsed = parsePreciseCalculationForm(trialDraft)
@@ -159,6 +217,13 @@ export function PreciseCalculatorScreen() {
     setOpeningSheetVisible(false)
     setEditingOpening(null)
     updateDraft(() => trialDraft)
+
+    if (isNew) {
+      getAnalyticsService().track('opening_added', {
+        opening_type: mapOpeningTypeForAnalytics(opening.kind),
+        opening_count_bucket: bucketOpeningCount(trialDraft.openings.length),
+      })
+    }
   }
 
   const openNewOpening = (kind: PreciseOpeningDraft['kind']) => {
@@ -175,9 +240,44 @@ export function PreciseCalculatorScreen() {
     setOpeningSheetVisible(true)
   }
 
+  const handleRemoveOpening = (openingId: string) => {
+    const removed = draft.openings.find((entry) => entry.id === openingId)
+    const nextOpenings = draft.openings.filter((entry) => entry.id !== openingId)
+    updateDraft((current) => ({
+      ...current,
+      openings: nextOpenings,
+    }))
+
+    if (removed) {
+      getAnalyticsService().track('opening_removed', {
+        opening_type: mapOpeningTypeForAnalytics(removed.kind),
+        opening_count_bucket: bucketOpeningCount(nextOpenings.length),
+      })
+    }
+  }
+
   const handlePatternCalculate = (patternValues: PatternFormValues) => {
     updateDraft((current) => ({ ...current, pattern: patternValues }))
     setPatternSheetVisible(false)
+  }
+
+  const handleBackToQuick = () => {
+    getAnalyticsService().track('precise_to_quick')
+    router.back()
+  }
+
+  const handleToggleExplanation = () => {
+    setExplanationExpanded((expanded) => {
+      if (!expanded) {
+        getAnalyticsService().track('explanation_opened', { mode: 'precise' })
+      }
+      return !expanded
+    })
+  }
+
+  const handleOpenPatternSheet = () => {
+    getAnalyticsService().track('pattern_refinement_opened', { mode: 'precise' })
+    setPatternSheetVisible(true)
   }
 
   return (
@@ -196,7 +296,7 @@ export function PreciseCalculatorScreen() {
           >
             <Pressable
               accessibilityRole="button"
-              onPress={() => router.back()}
+              onPress={handleBackToQuick}
               style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
             >
               <Text style={styles.backLabel}>
@@ -257,10 +357,7 @@ export function PreciseCalculatorScreen() {
               onAddDoor={() => openNewOpening('door')}
               onAddWindow={() => openNewOpening('window')}
               onEditOpening={openEditOpening}
-              onRemoveOpening={(openingId) => updateDraft((current) => ({
-                ...current,
-                openings: current.openings.filter((entry) => entry.id !== openingId),
-              }))}
+              onRemoveOpening={handleRemoveOpening}
               openings={draft.openings}
               walls={draft.walls}
             />
@@ -269,7 +366,7 @@ export function PreciseCalculatorScreen() {
 
             <WallpaperConfigSummary
               draft={draft}
-              onChangePattern={() => setPatternSheetVisible(true)}
+              onChangePattern={handleOpenPatternSheet}
               onChangeRoll={() => setRollSheetVisible(true)}
             />
 
@@ -301,7 +398,7 @@ export function PreciseCalculatorScreen() {
             {presentedResult ? (
               <PreciseResult
                 explanationExpanded={explanationExpanded}
-                onToggleExplanation={() => setExplanationExpanded((value) => !value)}
+                onToggleExplanation={handleToggleExplanation}
                 result={presentedResult}
               />
             ) : null}
@@ -361,6 +458,7 @@ export function PreciseCalculatorScreen() {
       </Modal>
 
       <PatternRefinementSheet
+        analyticsMode="precise"
         initialValues={draft.pattern ?? DEFAULT_PATTERN_FORM_VALUES}
         onCalculate={handlePatternCalculate}
         onClose={() => setPatternSheetVisible(false)}

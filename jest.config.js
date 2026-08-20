@@ -7,10 +7,12 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^expo/virtual/env$': '<rootDir>/jest/expo-virtual-env-mock.js',
   },
   collectCoverageFrom: [
     'src/domain/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
   ],
   testPathIgnorePatterns: ['/node_modules/', '/android/', '/ios/'],
+  setupFiles: ['<rootDir>/jest/setup.js'],
 }

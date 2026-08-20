@@ -1,25 +1,28 @@
 /**
  * Typed access to public environment variables.
- * Production ad/analytics IDs must never be committed to the repository.
+ *
+ * AppMetrica API key is an application identifier embedded in the client
+ * (not a server-side private secret). Still keep production keys out of git
+ * via local `.env` / CI injection — never commit real keys.
  */
 export const env = {
   /**
-   * When true, analytics events are logged to the console instead of a SDK.
-   * Set via EXPO_PUBLIC_ANALYTICS_DEV_MODE=true in local .env files.
+   * When true, the DevAnalyticsService logs events to the console.
+   * Defaults to true in `__DEV__`.
    */
   analyticsDevMode:
     process.env.EXPO_PUBLIC_ANALYTICS_DEV_MODE === 'true' ||
     __DEV__,
 
   /**
-   * Placeholder AppMetrica API key — replace only in local .env, never in git.
-   * Real integration is deferred to Phase 5.
+   * AppMetrica application API key from the AppMetrica console.
+   * Empty / placeholder → DevAnalyticsService (no native activate).
    */
   appMetricaApiKey: process.env.EXPO_PUBLIC_APPMETRICA_API_KEY ?? '',
 
   /**
-   * Placeholder Yandex ad block ids — replace only in local .env, never in git.
-   * Real integration is deferred to Phase 5.
+   * Placeholder Yandex ad block ids — advertising is NOT part of Phase 5A.
+   * Replace only in local `.env` when Phase 6 begins.
    */
   yandexBannerBlockId: process.env.EXPO_PUBLIC_YANDEX_BANNER_BLOCK_ID ?? '',
   yandexInterstitialBlockId:

@@ -20,8 +20,10 @@ This project uses **Expo Development Build**, not Expo Go.
 git clone <repository-url>
 cd wallpaperAppRustore
 npm install
-cp .env.example .env   # optional — dev analytics logging
+cp .env.example .env   # optional — AppMetrica key + analytics logging
 ```
+
+See [docs/ANALYTICS.md](docs/ANALYTICS.md) for Phase 5A product analytics.
 
 ### Android environment (Windows PowerShell, per session)
 

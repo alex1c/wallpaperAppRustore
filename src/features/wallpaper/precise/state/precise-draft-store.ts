@@ -7,6 +7,11 @@ import { DEFAULT_PRECISE_DRAFT } from './precise-draft-types'
  */
 let pendingPreciseDraft: PreciseDraft | null = null
 
+/** True while a Quick → Precise draft is waiting to be consumed. */
+export function hasPendingPreciseDraft(): boolean {
+  return pendingPreciseDraft !== null
+}
+
 /** Stores a draft before navigating to `/precise`. */
 export function setPendingPreciseDraft(draft: PreciseDraft): void {
   pendingPreciseDraft = draft

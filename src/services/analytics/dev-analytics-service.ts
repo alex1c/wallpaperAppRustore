@@ -1,25 +1,51 @@
 import { env } from '@/config/env'
-import type { AnalyticsEvent, AnalyticsService } from './types'
+import type {
+  AnalyticsEventMap,
+  AnalyticsEventName,
+  AnalyticsScreenName,
+} from './event-taxonomy'
+import type { AnalyticsService } from './types'
 
 /**
- * Development/no-op analytics provider.
- * Logs structured events locally until AppMetrica is integrated.
+ * Development analytics provider — local structured logs only.
+ * Never contacts AppMetrica. Used when no real API key is configured.
  */
 export class DevAnalyticsService implements AnalyticsService {
-  private userProperties: Record<string, string> = {}
+  private enabled = true
+  private initialized = false
 
-  track(event: AnalyticsEvent): void {
-    if (!env.analyticsDevMode) {
+  initialize(): void {
+    this.initialized = true
+  }
+
+  track<Name extends AnalyticsEventName>(
+    name: Name,
+    ...args: AnalyticsEventMap[Name] extends undefined
+      ? []
+      : [params: AnalyticsEventMap[Name]]
+  ): void {
+    if (!this.enabled || !env.analyticsDevMode) {
       return
     }
 
-    console.info('[Analytics:dev]', event.name, {
-      ...event.params,
-      ...this.userProperties,
-    })
+    const params = args[0]
+    // Dev-only visibility; production builds use AppMetrica or stay silent.
+    console.info('[Analytics:dev]', name, params ?? {})
   }
 
-  setUserProperty(key: string, value: string): void {
-    this.userProperties[key] = value
+  screen(name: AnalyticsScreenName): void {
+    if (!this.enabled || !env.analyticsDevMode) {
+      return
+    }
+
+    console.info('[Analytics:dev:screen]', name)
+  }
+
+  setEnabled(enabled: boolean): void {
+    this.enabled = enabled
+  }
+
+  isInitialized(): boolean {
+    return this.initialized
   }
 }

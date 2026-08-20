@@ -76,10 +76,11 @@ Planned production: Yandex Mobile Ads → Mediation → RSЯ + VK Ads.
 ### Analytics (`src/services/analytics/`)
 
 ```text
-UI / domain hooks → AnalyticsService → AppMetrica (Phase 5)
+UI → AnalyticsService → Safe wrapper → AppMetrica | Dev | Noop
 ```
 
-Semantic events: `app_open`, `calculation_start`, `calculation_complete`, `result_view`, etc.
+Phase 5A: AppMetrica adapter + privacy-first taxonomy (`docs/ANALYTICS.md`).
+UI never imports `@appmetrica/react-native-analytics` directly.
 
 ### Persistence (`src/services/persistence/`)
 
@@ -106,12 +107,13 @@ Future: `@react-native-async-storage/async-storage` or similar without UI change
 | `/wallpaper` | Legacy redirect to `/` |
 | `/precise` | Precise Mode — per-wall geometry and openings (Phase 4B2) |
 
-## Native SDK plan (deferred)
+## Native SDK plan
 
 | SDK | Phase | Integration point |
 |-----|-------|-------------------|
-| Yandex Mobile Ads | 5 | `YandexAdService implements AdService` |
-| AppMetrica | 5 | `AppMetricaAnalyticsService implements AnalyticsService` |
+| AppMetrica | 5A | `AppMetricaAnalyticsService implements AnalyticsService` |
+| Share / PDF | 5B | System Share Sheet — no vendor chat SDKs |
+| Yandex Mobile Ads | 6 | `YandexAdService implements AdService` |
 
 Validate each SDK in a **development build** before store release.
 

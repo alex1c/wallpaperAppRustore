@@ -11,11 +11,9 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 4B2 — Precise Mode UX** ✅ complete
+**Phase 5A — Product analytics foundation** (complete / ACCEPT)
 
-Phase 4B1 committed at `7b25e30`. Phase 4B2 adds `/precise` screen — walls, doors/windows, wall preview, result presenter with «По расчётному раскрою» wording, Quick → Precise handoff, separate pattern entry card.
-
-**Do NOT implement** half-drop calculation, persistence, ads, or RuStore release until a later roadmap phase.
+AppMetrica is live behind `AnalyticsService` with a privacy-first event taxonomy. Next: **Phase 5B — Share calculation** (system Android Share Sheet). **Do NOT** add advertising SDKs or change calculation semantics in 5B.
 
 ## Tech stack (pinned at project creation)
 
@@ -61,6 +59,7 @@ Verify exact versions in `package.json` after install.
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Layer boundaries and diagrams |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Phased delivery plan |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | ADR log — architectural decisions |
+| [docs/ANALYTICS.md](docs/ANALYTICS.md) | Phase 5A AppMetrica taxonomy, privacy, config |
 | [README.md](README.md) | Setup, scripts, project structure |
 
 > Before doing substantial work, read **AGENTS.md** and the documents it references.

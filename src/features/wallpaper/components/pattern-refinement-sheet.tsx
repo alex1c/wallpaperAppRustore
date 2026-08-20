@@ -22,6 +22,10 @@ import {
   changePatternRepeatDraft,
 } from '@/features/wallpaper/pattern/pattern-draft'
 import { t } from '@/i18n'
+import {
+  getAnalyticsService,
+  mapPatternForAnalytics,
+} from '@/services/analytics'
 import { colors, radii, spacing, typography } from '@/theme'
 import type { ParseDecimalInputErrorCode } from '@/units/parse-decimal-input'
 
@@ -31,6 +35,8 @@ interface PatternRefinementSheetProps {
   onCalculate: (patternValues: PatternFormValues) => void
   onDraftChange: () => void
   initialValues?: PatternFormValues
+  /** Product mode for analytics — sheet is not a navigation screen. */
+  analyticsMode?: 'quick' | 'precise'
 }
 
 /**
@@ -53,6 +59,7 @@ function PatternRefinementSheetBody({
   onCalculate,
   onDraftChange,
   initialValues,
+  analyticsMode = 'quick',
 }: PatternRefinementSheetProps) {
   const strings = t()
   const [patternValues, setPatternValues] = useState<PatternFormValues>(
@@ -102,11 +109,21 @@ function PatternRefinementSheetBody({
     if (!parsed.ok) {
       if ('halfDropDeferred' in parsed && parsed.halfDropDeferred) {
         setHalfDropMessage(strings.wallpaper.pattern.halfDropDeferred)
+        getAnalyticsService().track('pattern_calculation_blocked', {
+          mode: analyticsMode,
+          pattern: mapPatternForAnalytics('half-drop'),
+          block_reason: 'half_drop',
+        })
         return
       }
 
       if ('fieldErrors' in parsed && parsed.fieldErrors.repeatCm) {
         setRepeatError(resolveRepeatError(parsed.fieldErrors.repeatCm))
+        getAnalyticsService().track('pattern_calculation_blocked', {
+          mode: analyticsMode,
+          pattern: mapPatternForAnalytics(patternValues.matchType),
+          block_reason: 'validation',
+        })
         return
       }
 

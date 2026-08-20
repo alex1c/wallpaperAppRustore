@@ -69,30 +69,48 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Safe offcut reuse (Policy B research)
 - “Already have N rolls — enough?” in precise context
 
-## Phase 5 — Ads & analytics
+## Phase 5A — Product analytics foundation (complete)
 
-- Yandex Mobile Ads + mediation (RSЯ, VK Ads)
-- AppMetrica production integration
-- Ad frequency caps, rewarded flows
+- AppMetrica via `@appmetrica/react-native-analytics` behind `AnalyticsService`
+- Privacy-first categorical event taxonomy (no raw dimensions)
+- Dev/noop providers for local + Jest
+- Spec: `docs/ANALYTICS.md`
+- Native + AppMetrica console verified (custom events visible)
+- **No advertising** in this phase
+
+## Phase 5B — Share calculation (next)
+
+- «Поделиться расчётом» using the **standard Android Share Sheet** (`ACTION_SEND`)
+- Russian-ecosystem friendly: MAX, email, VK, Telegram, WhatsApp, SMS / other installed targets
+- Human-readable text share first; PDF/report exploration
+- No dedicated Telegram/WhatsApp/MAX chat SDK buttons
+- Analytics events only when OS signals are reliable
+- Advertising remains later and separate (Phase 6)
+
+## Phase 6 — Ads & monetization (future)
+
+- Yandex Mobile Ads + mediation (RSЯ, VK Ads) — after usage data from 5A
+- AppMetrica already available for product analytics
+- Ad frequency caps, rewarded flows for optional extras (never gate core calculation)
 - Wire `ad_impression`, revenue-related events
 
-## Phase 6 — Product quality
+## Phase 7 — Product quality
 
 - Persistent settings & last calculation
 - Accessibility audit, edge cases, performance
 - Privacy policy content, data handling
 
-## Phase 7 — RuStore release
+## Phase 8 — RuStore release
 
 - Signing, AAB, store listing, screenshots
 - Moderation fixes, production verification
 
-## Phase 8 — Measurement
+## Phase 9 — Measurement
 
 - Retention, ad metrics, revenue/install analysis
 - Decide scale / pivot / iterate
 
-## Phase 9 — Platform extraction
+## Phase 10 — Platform extraction
 
 **Gate:** positive or learnable RPI from Wallpaper Calculator
 
@@ -104,26 +122,16 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 ## Deferred product explorations
 
-Not scheduled implementation — capture only, so Phase 4B2 stay closed without Phase 5 leakage.
+Captured during Phase 4B2 closeout; still valid.
 
 ### Share calculation
 
-Future UX exploration:
-
-- «Поделиться расчётом» action after a successful calculation
-- Shareable human-readable result (inputs + result + explanation)
-- Prefer native share sheet; PDF or another artifact is exploratory, not decided
-- Must not block the basic calculation flow
+See Phase 5B — system Share Sheet first; PDF exploratory.
 
 ### Monetization
 
-Future product exploration:
-
-- Careful in-app ad placements
-- Rewarded ads may unlock extras such as export/share
-- Never gate the core wallpaper calculation behind ads
-- Concrete ad model chosen only after dedicated UX/monetization review
+See Phase 6 — careful placements; rewarded only for extras; never block basic calculation.
 
 ---
 
-**Current focus:** Phase 4B2 closed. Next roadmap candidates are Phase 4B3+ precise leftovers or Phase 5 ads/analytics — choose explicitly before starting work.
+**Current focus:** Phase 5B — Share calculation. Do not start ads until usage data from 5A exists.

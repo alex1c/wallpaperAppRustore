@@ -1,7 +1,7 @@
+import { createAnalyticsService } from './create-analytics-service'
 import type { AnalyticsService } from './types'
-import { DevAnalyticsService } from './dev-analytics-service'
 
-let analyticsService: AnalyticsService = new DevAnalyticsService()
+let analyticsService: AnalyticsService = createAnalyticsService()
 
 /** Returns the process-wide analytics service instance. */
 export function getAnalyticsService(): AnalyticsService {
@@ -13,5 +13,41 @@ export function setAnalyticsService(service: AnalyticsService): void {
   analyticsService = service
 }
 
-export type { AnalyticsEvent, AnalyticsEventName, AnalyticsService } from './types'
+export type {
+  AnalyticsEvent,
+  AnalyticsService,
+} from './types'
+export type {
+  AnalyticsErrorCategory,
+  AnalyticsEventMap,
+  AnalyticsEventName,
+  AnalyticsScreenName,
+  OpeningCountBucket,
+  OpeningTypeAnalyticsValue,
+  PatternAnalyticsValue,
+  PatternBlockReason,
+  ResultRollBucket,
+  RollAnalyticsValue,
+  WallCountBucket,
+} from './event-taxonomy'
+
+export {
+  assertNoRawDimensionParams,
+  bucketOpeningCount,
+  bucketResultRolls,
+  bucketWallCount,
+  mapOpeningTypeForAnalytics,
+  mapPatternForAnalytics,
+  mapRollPresetForAnalytics,
+} from './property-mappers'
+
+export { AppMetricaAnalyticsService } from './appmetrica-analytics-service'
 export { DevAnalyticsService } from './dev-analytics-service'
+export { NoopAnalyticsService } from './noop-analytics-service'
+export { RecordingAnalyticsService } from './recording-analytics-service'
+export { SafeAnalyticsService } from './safe-analytics-service'
+export {
+  createAnalyticsService,
+  hasConfiguredAppMetricaKey,
+  PLACEHOLDER_API_KEY,
+} from './create-analytics-service'

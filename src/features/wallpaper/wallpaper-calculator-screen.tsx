@@ -43,7 +43,13 @@ import {
   type PresentedWallpaperResult,
 } from '@/features/wallpaper/presenter'
 import { getLocale, t } from '@/i18n'
-import { getAnalyticsService } from '@/services'
+import {
+  bucketResultRolls,
+  bucketWallCount,
+  getAnalyticsService,
+  mapPatternForAnalytics,
+  mapRollPresetForAnalytics,
+} from '@/services/analytics'
 import { colors, radii, spacing, typography } from '@/theme'
 import type { ParseDecimalInputErrorCode } from '@/units/parse-decimal-input'
 
@@ -66,6 +72,10 @@ export function WallpaperCalculatorScreen() {
 
   const scrollRef = useRef<ScrollView>(null)
   const fieldRefs = useRef<Partial<Record<QuickFormFieldKey, TextInput | null>>>({})
+
+  useEffect(() => {
+    getAnalyticsService().screen('quick_calculator')
+  }, [])
 
   const registerFieldRef = useCallback(
     (key: QuickFormFieldKey) => (ref: TextInput | null) => {
@@ -159,12 +169,16 @@ export function WallpaperCalculatorScreen() {
 
   const runCalculation = (
     parsedInput: import('@/domain/wallpaper').QuickWallpaperCalculationInput,
+    options?: { fromPatternSheet?: boolean },
   ) => {
-    getAnalyticsService().track({ name: 'calculation_start' })
+    const analytics = getAnalyticsService()
+    const pattern = mapPatternForAnalytics(parsedInput.pattern?.match)
+    const roll = mapRollPresetForAnalytics(formValues.rollPresetId)
 
     const outcome = calculateQuickWallpaper(parsedInput)
 
     if (!outcome.ok) {
+      analytics.track('quick_calculation_failed', { error_category: 'calculation' })
       const messageKey = mapDomainErrorToMessageKey(outcome.error.code)
       setDomainErrorMessage(strings.wallpaper.errors.domain[messageKey])
       return
@@ -173,6 +187,7 @@ export function WallpaperCalculatorScreen() {
     const recommendation = recommendRollPurchaseFromResult(outcome.result)
 
     if (!recommendation.ok) {
+      analytics.track('quick_calculation_failed', { error_category: 'calculation' })
       const messageKey = mapDomainErrorToMessageKey(recommendation.error.code)
       setDomainErrorMessage(strings.wallpaper.errors.domain[messageKey])
       return
@@ -186,11 +201,20 @@ export function WallpaperCalculatorScreen() {
 
     setPresentedResult(presented)
 
-    getAnalyticsService().track({
-      name: 'calculation_complete',
-      params: { rolls: outcome.result.minimumRolls },
+    const resultBucket = bucketResultRolls(outcome.result.minimumRolls)
+    analytics.track('quick_calculation_completed', {
+      pattern,
+      roll,
+      result_roll_bucket: resultBucket,
     })
-    getAnalyticsService().track({ name: 'result_view' })
+
+    if (options?.fromPatternSheet) {
+      analytics.track('pattern_calculation_completed', {
+        mode: 'quick',
+        pattern,
+        result_roll_bucket: resultBucket,
+      })
+    }
   }
 
   const handleCalculate = () => {
@@ -202,6 +226,10 @@ export function WallpaperCalculatorScreen() {
     const parsed = parseQuickCalculationForm(formValues)
 
     if (!parsed.ok) {
+      getAnalyticsService().track('quick_calculation_failed', {
+        error_category: 'validation',
+      })
+
       if (parsed.fieldErrors) {
         setFieldErrors(parsed.fieldErrors)
         focusFirstInvalidField(parsed.fieldErrors)
@@ -225,6 +253,10 @@ export function WallpaperCalculatorScreen() {
     const parsed = parseQuickCalculationForm(formValues)
 
     if (!parsed.ok) {
+      getAnalyticsService().track('quick_calculation_failed', {
+        error_category: 'validation',
+      })
+
       if (parsed.fieldErrors) {
         setFieldErrors(parsed.fieldErrors)
         setPatternSheetVisible(false)
@@ -244,7 +276,9 @@ export function WallpaperCalculatorScreen() {
     }
 
     setFieldErrors({})
-    runCalculation(withPatternInput(parsed.input, patternParsed.pattern))
+    runCalculation(withPatternInput(parsed.input, patternParsed.pattern), {
+      fromPatternSheet: true,
+    })
   }
 
   const invalidatePresentedCalculation = useCallback(() => {
@@ -258,8 +292,26 @@ export function WallpaperCalculatorScreen() {
   ])
 
   const handleOpenPreciseMode = () => {
-    setPendingPreciseDraft(buildPreciseDraftFromQuickForm(formValues))
+    const draft = buildPreciseDraftFromQuickForm(formValues)
+    getAnalyticsService().track('quick_to_precise', {
+      wall_count_bucket: bucketWallCount(draft.walls.length),
+    })
+    setPendingPreciseDraft(draft)
     router.push('/precise')
+  }
+
+  const handleToggleExplanation = () => {
+    setExplanationExpanded((expanded) => {
+      if (!expanded) {
+        getAnalyticsService().track('explanation_opened', { mode: 'quick' })
+      }
+      return !expanded
+    })
+  }
+
+  const handleOpenPatternSheet = () => {
+    getAnalyticsService().track('pattern_refinement_opened', { mode: 'quick' })
+    setPatternSheetVisible(true)
   }
 
   const showCustomRollFields = formValues.rollPresetId === 'custom'
@@ -385,19 +437,20 @@ export function WallpaperCalculatorScreen() {
               >
                 <CalculationResult
                   explanationExpanded={explanationExpanded}
-                  onToggleExplanation={() => setExplanationExpanded((value) => !value)}
+                  onToggleExplanation={handleToggleExplanation}
                   result={presentedResult}
                 />
               </View>
             ) : null}
 
-            <PatternEntryCard onPress={() => setPatternSheetVisible(true)} />
+            <PatternEntryCard onPress={handleOpenPatternSheet} />
             <PreciseEntryCard onPress={handleOpenPreciseMode} />
           </ScrollView>
         </KeyboardAvoidingView>
       </ScreenContainer>
 
       <PatternRefinementSheet
+        analyticsMode="quick"
         onCalculate={handlePatternCalculate}
         onClose={() => setPatternSheetVisible(false)}
         onDraftChange={invalidatePresentedCalculation}

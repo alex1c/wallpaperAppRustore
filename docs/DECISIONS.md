@@ -490,3 +490,22 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Avoid another keyboard experiment in Phase 4B2; keep parsing honest and display culturally correct for RuStore.
 
 **Consequences:** Opening cards show `0,8 × 2 м` even when the draft string used dots. Malformed text stays visible and fails only at submit.
+
+---
+
+## 2026-08-20 — AppMetrica behind AnalyticsService (Phase 5A)
+
+**Status:** Accepted
+
+**Context:** RuStore launch needs product analytics. Expo SDK 57 / RN 0.86 supports `@appmetrica/react-native-analytics` (>=0.76 peer). Ads must wait for usage data.
+
+**Decision:**
+1. Integrate official `@appmetrica/react-native-analytics` behind existing `AnalyticsService`.
+2. Privacy-first custom event taxonomy (categorical buckets only — no raw dimensions).
+3. Disable app-driven location / adv-id tracking flags at activate.
+4. Missing API key → Dev logger; Jest → Noop; always Safe wrapper.
+5. Advertising SDKs explicitly deferred to Phase 6.
+
+**Why:** Measure real usage before monetization UI; keep UI provider-agnostic for future calculator apps.
+
+**Consequences:** Native rebuild required for AppMetrica on device. Share/PDF remain Phase 5B. `react-dom` is pinned to the same version as `react` so normal `npm install` / `npm ci` resolve Expo's optional web peer reproducibly without `--legacy-peer-deps`.
