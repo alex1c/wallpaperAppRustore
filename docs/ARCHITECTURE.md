@@ -28,7 +28,7 @@
              │
              ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Future: Yandex Ads, AppMetrica, AsyncStorage/SQLite    │
+│  Native: Yandex Ads, AppMetrica (dev build / CNG)       │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -68,10 +68,11 @@
 ### Advertising (`src/services/ads/`)
 
 ```text
-UI → AdService → provider (Noop now → Yandex later)
+UI → ResultBanner / AdService → SafeAdService → YandexAdService | NoopAdService
 ```
 
-Planned production: Yandex Mobile Ads → Mediation → RSЯ + VK Ads.
+Phase 5C: official `yandex-mobile-ads` — `result_banner` + `footer_banner`, rewarded foundation (not product-gated). See `docs/ADS.md`.
+Interstitial / app-open / mediation deferred.
 
 ### Analytics (`src/services/analytics/`)
 
@@ -81,7 +82,8 @@ UI → AnalyticsService → Safe wrapper → AppMetrica | Dev | Noop
 
 Phase 5A: AppMetrica adapter + privacy-first taxonomy (`docs/ANALYTICS.md`).
 Phase 5B: Share/PDF via `ShareService` + `src/features/wallpaper/report/` (`docs/SHARING_AND_REPORTS.md`).
-UI never imports `@appmetrica/react-native-analytics` or vendor chat SDKs directly.
+Phase 5C: categorical ad product events (`ad_banner_*`, `rewarded_*`).
+UI never imports `@appmetrica/react-native-analytics` or `yandex-mobile-ads` directly.
 
 ### Persistence (`src/services/persistence/`)
 
@@ -114,7 +116,7 @@ Future: `@react-native-async-storage/async-storage` or similar without UI change
 |-----|-------|-------------------|
 | AppMetrica | 5A | `AppMetricaAnalyticsService implements AnalyticsService` |
 | Share / PDF | 5B | `ShareService` + report layer — system Share Sheet only |
-| Yandex Mobile Ads | 5C / 6 | `YandexAdService implements AdService` |
+| Yandex Mobile Ads | 5C | `YandexAdService` + `ResultBanner` — banner + rewarded foundation |
 
 Validate each SDK in a **development build** before store release.
 

@@ -65,7 +65,20 @@ AppMetrica’s native SDK may collect device/network/session technical data acco
 
 ## Advertising
 
-**NOT IMPLEMENTED in Phase 5A/5B.** No ad SDKs, placements, or fake ad events.
+Phase 5C implements product-level ad events — see `docs/ADS.md`.
+
+| Event | Trigger | Safe properties |
+|-------|---------|-----------------|
+| `ad_banner_load_requested` | Result banner prepare | `placement`, `format`, `mode` |
+| `ad_banner_loaded` | Banner loaded | `placement`, `format`, `mode` |
+| `ad_banner_failed` | Banner load/SDK failure | `placement`, `format`, `mode`, `error_category` |
+| `ad_banner_impression` | Banner impression callback | `placement`, `format`, `mode` |
+| `rewarded_load_requested` / `rewarded_loaded` / `rewarded_failed` | Rewarded lifecycle | placement/format/mode (+ `error_category`) |
+| `rewarded_opened` / `rewarded_reward_earned` / `rewarded_closed` | Rewarded show | + `reward_granted` on close |
+
+Do not send ad unit IDs, creative bodies, click URLs, or raw SDK errors in custom params.
+
+Yandex Ads SDK may also emit automatic ad revenue/impression signals into the Yandex stack when integrated with AppMetrica — treat those as SDK telemetry, not duplicates of our placement events.
 
 ## Share / PDF (Phase 5B)
 

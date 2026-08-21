@@ -18,6 +18,9 @@ export type {
   AnalyticsService,
 } from './types'
 export type {
+  AdErrorCategoryAnalyticsValue,
+  AdFormatAnalyticsValue,
+  AdPlacementAnalyticsValue,
   AnalyticsErrorCategory,
   AnalyticsEventMap,
   AnalyticsEventName,

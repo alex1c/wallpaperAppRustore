@@ -123,6 +123,13 @@ export function assertNoRawDimensionParams(
     'wall_height',
     'door_width',
     'window_height',
+    'ad_unit',
+    'creative',
+    'click_url',
+    'target_url',
+    'gaid',
+    'oaid',
+    'android_id',
   ]
 
   for (const key of Object.keys(params)) {

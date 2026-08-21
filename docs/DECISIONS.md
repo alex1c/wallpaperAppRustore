@@ -529,3 +529,25 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Minimal native surface (Expo modules), CNG-friendly, privacy-safe telemetry, truthful Quick vs Precise wording.
 
 **Consequences:** Development build needs modules `expo-print`, `expo-sharing`, `expo-file-system`. Half-drop remains non-numeric. PDF UX closes the chooser before generation completes.
+
+---
+
+## 2026-08-20 — Yandex Mobile Ads foundation (Phase 5C)
+
+**Status:** Accepted
+
+**Context:** Phase 5A/5B are complete. Monetization should start conservatively on RuStore without harming calculator UX or Share/PDF.
+
+**Decision:**
+1. Integrate official `yandex-mobile-ads` **8.3.0** via autolinking (no fragile hand-edited `android/`).
+2. Keep `AdService` + add `SafeAdService` and `YandexAdService`; UI never imports the SDK.
+3. Ship two non-sticky product banner placements (`result_banner` and `footer_banner`) after completed Quick/Precise results; both share one configured banner unit.
+4. Integrate rewarded load/show infrastructure, but **do not** gate Share, PDF, or calculation.
+5. `__DEV__` / Jest always use official demo units (`demo-banner-yandex`, `demo-rewarded-yandex`).
+6. Production units come from `EXPO_PUBLIC_YANDEX_ADS_*` env vars; missing → ads disabled.
+7. No interstitial, app-open, or mediation in Phase 5C.
+8. Privacy: app code does not collect GAID/OAID/location; `setLocationConsent(false)` before init; no invented GDPR dialog for Russia-first launch (document EEA caveat).
+
+**Why:** Validate RPI with the smallest reversible ads surface while preserving trust and CNG.
+
+**Consequences:** Native rebuild required. Custom AppMetrica ad events are categorical placement signals. Consent UX may be required later for EEA distribution.

@@ -1,17 +1,18 @@
-import type { AdService } from './types'
-import { NoopAdService } from './noop-ad-service'
-
-let adService: AdService = new NoopAdService()
-
-/** Returns the process-wide ad service instance. */
-export function getAdService(): AdService {
-  return adService
-}
-
-/** Allows tests or future DI to replace the ad provider. */
-export function setAdService(service: AdService): void {
-  adService = service
-}
-
-export type { AdService, AdShowResult, RewardedAdResult } from './types'
+export { getAdService, setAdService } from './ad-registry'
+export type {
+	AdErrorCategory,
+	AdFormat,
+	AdPlacementId,
+	AdService,
+	AdShowResult,
+	BannerPlacementId,
+	ResultBannerContext,
+	RewardedAdResult,
+	RewardedPlacementId,
+} from './types'
 export { NoopAdService } from './noop-ad-service'
+export { SafeAdService } from './safe-ad-service'
+export { createAdService } from './create-ad-service'
+
+// ResultBanner lives in `./result-banner` and must be imported directly —
+// it depends on React Native and must not enter the Jest node test graph.

@@ -239,6 +239,13 @@ export const en: TranslationTree = {
         generatingPdf: 'Preparing PDF…',
       },
     },
+    adsDev: {
+      rewardedTestButton: 'Test rewarded (dev)',
+      rewardedTestHint: 'Development only — hidden in production builds.',
+      rewardedEarned: 'Reward earned (dev).',
+      rewardedClosed: 'Rewarded closed without reward (dev).',
+      rewardedUnavailable: 'Rewarded unavailable (dev).',
+    },
     explanation: {
       toggleLabel: 'How we calculated this',
       toggleHintCollapsed: 'Tap to expand the explanation',

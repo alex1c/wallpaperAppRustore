@@ -61,6 +61,7 @@ import {
   mapPatternForAnalytics,
   mapRollPresetForAnalytics,
 } from '@/services/analytics'
+import { ResultBanner } from '@/services/ads/result-banner'
 import { colors, radii, spacing, typography } from '@/theme'
 
 /**
@@ -410,6 +411,15 @@ export function PreciseCalculatorScreen() {
             {presentedResult ? (
               <>
                 <PreciseResult
+                  belowDetailsSlot={
+                    <ResultBanner
+                      key={`result_banner:${presentedResult.resultKey}`}
+                      mode="precise"
+                      placement="result_banner"
+                      resultKey={presentedResult.resultKey}
+                      visible
+                    />
+                  }
                   explanationExpanded={explanationExpanded}
                   onToggleExplanation={handleToggleExplanation}
                   result={presentedResult}
@@ -426,6 +436,14 @@ export function PreciseCalculatorScreen() {
                     })
                     setShareSheetVisible(true)
                   }}
+                />
+                <ResultBanner
+                  key={`footer_banner:${presentedResult.resultKey}`}
+                  mode="precise"
+                  placement="footer_banner"
+                  resultKey={presentedResult.resultKey}
+                  style={styles.footerBanner}
+                  visible
                 />
               </>
             ) : null}
@@ -522,6 +540,10 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: spacing.xl,
+  },
+  footerBanner: {
+    marginBottom: spacing.md,
+    marginTop: spacing.lg,
   },
   backButton: {
     marginBottom: spacing.sm,

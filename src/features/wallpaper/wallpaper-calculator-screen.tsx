@@ -25,6 +25,7 @@ import { PreciseEntryCard } from '@/features/wallpaper/components/precise-entry-
 import { RollPresetSelector } from '@/features/wallpaper/components/roll-preset-selector'
 import { ShareCalculationButton } from '@/features/wallpaper/components/share-calculation-button'
 import { ShareCalculationSheet } from '@/features/wallpaper/components/share-calculation-sheet'
+import { DevRewardedTestButton } from '@/features/wallpaper/components/dev-rewarded-test-button'
 import { buildQuickCalculationReport } from '@/features/wallpaper/report'
 import type { CalculationReportModel } from '@/features/wallpaper/report'
 import { buildPreciseDraftFromQuickForm } from '@/features/wallpaper/precise/input/build-precise-draft-from-quick'
@@ -54,6 +55,7 @@ import {
   mapPatternForAnalytics,
   mapRollPresetForAnalytics,
 } from '@/services/analytics'
+import { ResultBanner } from '@/services/ads/result-banner'
 import { colors, radii, spacing, typography } from '@/theme'
 import type { ParseDecimalInputErrorCode } from '@/units/parse-decimal-input'
 
@@ -474,6 +476,15 @@ export function WallpaperCalculatorScreen() {
                 }}
               >
                 <CalculationResult
+                  belowDetailsSlot={
+                    <ResultBanner
+                      key={`result_banner:${presentedResult.resultKey}`}
+                      mode="quick"
+                      placement="result_banner"
+                      resultKey={presentedResult.resultKey}
+                      visible
+                    />
+                  }
                   explanationExpanded={explanationExpanded}
                   onToggleExplanation={handleToggleExplanation}
                   result={presentedResult}
@@ -484,6 +495,17 @@ export function WallpaperCalculatorScreen() {
 
             <PatternEntryCard onPress={handleOpenPatternSheet} />
             <PreciseEntryCard onPress={handleOpenPreciseMode} />
+            {__DEV__ ? <DevRewardedTestButton /> : null}
+            {presentedResult ? (
+              <ResultBanner
+                key={`footer_banner:${presentedResult.resultKey}`}
+                mode="quick"
+                placement="footer_banner"
+                resultKey={presentedResult.resultKey}
+                style={styles.footerBanner}
+                visible
+              />
+            ) : null}
           </ScrollView>
         </KeyboardAvoidingView>
       </ScreenContainer>
@@ -512,6 +534,10 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: spacing.xl,
+  },
+  footerBanner: {
+    marginBottom: spacing.md,
+    marginTop: spacing.lg,
   },
   heading: {
     ...typography.title,

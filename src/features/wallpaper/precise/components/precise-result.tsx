@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { ExplanationSection } from '@/features/wallpaper/components/explanation-section'
 import type { PresentedPreciseWallpaperResult } from '@/features/wallpaper/precise/presenter/present-precise-wallpaper-result'
@@ -8,6 +9,8 @@ interface PreciseResultProps {
   result: PresentedPreciseWallpaperResult
   explanationExpanded: boolean
   onToggleExplanation: () => void
+  /** Optional slot between secondary details and explanation (e.g. result banner). */
+  belowDetailsSlot?: ReactNode
 }
 
 /**
@@ -18,6 +21,7 @@ export function PreciseResult({
   result,
   explanationExpanded,
   onToggleExplanation,
+  belowDetailsSlot,
 }: PreciseResultProps) {
   const strings = t()
   const explanationStrings = strings.wallpaper.precise.explanation
@@ -66,6 +70,8 @@ export function PreciseResult({
           ))}
         </View>
       ) : null}
+
+      {belowDetailsSlot}
 
       <ExplanationSection
         expanded={explanationExpanded}

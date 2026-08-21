@@ -78,20 +78,28 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Native + AppMetrica console verified (custom events visible)
 - **No advertising** in this phase
 
-## Phase 5B — Share + PDF (current)
+## Phase 5B — Share + PDF ✅
 
 - «Поделиться расчётом» via **standard Android Share Sheet** (`ACTION_SEND` / Expo Sharing)
 - Text result + detailed PDF report (`expo-print`)
 - Russian-ecosystem friendly: MAX, email, VK, Telegram, WhatsApp, SMS when installed
 - Spec: `docs/SHARING_AND_REPORTS.md`
-- **No advertising** — ads remain Phase 5C / Phase 6
+- Share/PDF remain **free** (no rewarded gating)
 
-## Phase 5C / Phase 6 — Ads & monetization (future)
+## Phase 5C — Yandex Ads Foundation (current)
 
-- Yandex Mobile Ads + mediation (RSЯ, VK Ads) — after usage data from 5A
-- AppMetrica already available for product analytics
-- Ad frequency caps, rewarded flows for optional extras (never gate core calculation)
-- Wire `ad_impression`, revenue-related events
+- Official `yandex-mobile-ads` behind `AdService` + `SafeAdService`
+- Two non-sticky product banners after completed Quick/Precise results: `result_banner` and `footer_banner`
+- Rewarded infrastructure + `__DEV__` test trigger only (not product-gated)
+- Demo ad units in `__DEV__`; production units via env
+- Spec: `docs/ADS.md`
+- **Deferred:** interstitial, app-open, mediation, rewarded Share/PDF
+
+## Phase 6 — Ads expansion (future)
+
+- Mediation (RSЯ, VK Ads) after Phase 5C usage/revenue signal
+- Optional rewarded for non-core extras only (never gate calculation)
+- Frequency caps / additional placements as product decides
 
 ## Phase 7 — Product quality
 

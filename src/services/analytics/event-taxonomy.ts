@@ -22,6 +22,16 @@ export type AnalyticsErrorCategory =
 	| 'technical'
 export type PatternBlockReason = 'half_drop' | 'straight_with_openings' | 'validation'
 
+/** Ad placement ids used in product analytics (not Yandex adUnitId strings). */
+export type AdPlacementAnalyticsValue =
+  | 'result_banner'
+  | 'footer_banner'
+  | 'dev_rewarded_test'
+  | 'future_pdf_reward'
+
+export type AdFormatAnalyticsValue = 'banner' | 'rewarded'
+export type AdErrorCategoryAnalyticsValue = 'load' | 'show' | 'sdk' | 'unavailable'
+
 /**
  * Typed event → params map. Params use only safe categorical values.
  */
@@ -110,6 +120,60 @@ export interface AnalyticsEventMap {
     mode: ModeAnalyticsValue
     pattern: PatternAnalyticsValue
   }
+  /** Product banner load requested for a placement. */
+  ad_banner_load_requested: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  ad_banner_loaded: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  ad_banner_failed: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+    error_category: AdErrorCategoryAnalyticsValue
+  }
+  ad_banner_impression: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  rewarded_load_requested: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  rewarded_loaded: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  rewarded_failed: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+    error_category: AdErrorCategoryAnalyticsValue
+  }
+  rewarded_opened: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  rewarded_reward_earned: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+  }
+  rewarded_closed: {
+    placement: AdPlacementAnalyticsValue
+    format: AdFormatAnalyticsValue
+    mode: ModeAnalyticsValue
+    reward_granted: boolean
+  }
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventMap
@@ -129,9 +193,7 @@ export type AnalyticsParams = Record<string, AnalyticsPrimitive>
  */
 
 /**
- * Future monetization events (Phase 6+) — documentation only.
- * Do not implement ads or fire these in Phase 5A.
- *
- * Planned: ad_impression, ad_click, rewarded_offer_shown,
- * rewarded_started, rewarded_completed
+ * Phase 5C ad product events — categorical only.
+ * SDK may also report low-level impression/revenue telemetry to AppMetrica
+ * automatically when both SDKs are present; custom events stay product-level.
  */

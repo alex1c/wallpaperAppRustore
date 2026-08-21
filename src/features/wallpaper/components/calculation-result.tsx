@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import type { PresentedWallpaperResult } from '@/features/wallpaper/presenter'
 import { t } from '@/i18n'
@@ -8,6 +9,8 @@ interface CalculationResultProps {
   result: PresentedWallpaperResult
   explanationExpanded: boolean
   onToggleExplanation: () => void
+  /** Optional slot between secondary details and explanation (e.g. result banner). */
+  belowDetailsSlot?: ReactNode
 }
 
 /**
@@ -19,6 +22,7 @@ export function CalculationResult({
   result,
   explanationExpanded,
   onToggleExplanation,
+  belowDetailsSlot,
 }: CalculationResultProps) {
   const strings = t()
 
@@ -57,6 +61,8 @@ export function CalculationResult({
           </Text>
         </View>
       ) : null}
+
+      {belowDetailsSlot}
 
       <ExplanationSection
         expanded={explanationExpanded}

@@ -11,9 +11,9 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 5B — Share + PDF** (in progress, uncommitted)
+**Phase 5C — Yandex Ads Foundation** (in progress, uncommitted)
 
-Share calculation via Android system Share Sheet (text + PDF). **Do NOT** add advertising SDKs or change calculation semantics.
+Yandex Mobile Ads behind `AdService`: `result_banner` + `footer_banner`, rewarded infrastructure (not product-gated). Share/PDF stay free. **Do NOT** add interstitial, app-open, mediation, or rewarded gating.
 
 ## Tech stack (pinned at project creation)
 
@@ -61,6 +61,7 @@ Verify exact versions in `package.json` after install.
 | [docs/DECISIONS.md](docs/DECISIONS.md) | ADR log — architectural decisions |
 | [docs/ANALYTICS.md](docs/ANALYTICS.md) | Phase 5A AppMetrica taxonomy, privacy, config |
 | [docs/SHARING_AND_REPORTS.md](docs/SHARING_AND_REPORTS.md) | Phase 5B Share Sheet + text/PDF reports |
+| [docs/ADS.md](docs/ADS.md) | Phase 5C Yandex Ads foundation, placements, privacy |
 | [README.md](README.md) | Setup, scripts, project structure |
 
 > Before doing substantial work, read **AGENTS.md** and the documents it references.

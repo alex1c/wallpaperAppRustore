@@ -20,10 +20,11 @@ This project uses **Expo Development Build**, not Expo Go.
 git clone <repository-url>
 cd wallpaperAppRustore
 npm install
-cp .env.example .env   # optional — AppMetrica key + analytics logging
+cp .env.example .env   # optional — AppMetrica key, analytics logging, production ad units
 ```
 
 See [docs/ANALYTICS.md](docs/ANALYTICS.md) for Phase 5A product analytics.
+See [docs/ADS.md](docs/ADS.md) for Phase 5C Yandex Ads (demo units in `__DEV__`).
 
 ### Android environment (Windows PowerShell, per session)
 

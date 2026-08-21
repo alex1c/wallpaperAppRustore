@@ -270,6 +270,13 @@ export const ru: TranslationTree = {
         generatingPdf: 'Готовим PDF…',
       },
     },
+    adsDev: {
+      rewardedTestButton: 'Тест rewarded (dev)',
+      rewardedTestHint: 'Только для разработки — не показывается в production.',
+      rewardedEarned: 'Награда получена (dev).',
+      rewardedClosed: 'Rewarded закрыт без награды (dev).',
+      rewardedUnavailable: 'Rewarded недоступен (dev).',
+    },
     explanation: {
       toggleLabel: 'Как мы это посчитали?',
       toggleHintCollapsed: 'Нажмите, чтобы раскрыть пояснение',

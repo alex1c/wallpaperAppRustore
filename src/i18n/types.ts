@@ -213,6 +213,14 @@ export interface TranslationTree {
         generatingPdf: string
       }
     }
+    /** Development-only rewarded verification — never shown in production UI. */
+    adsDev: {
+      rewardedTestButton: string
+      rewardedTestHint: string
+      rewardedEarned: string
+      rewardedClosed: string
+      rewardedUnavailable: string
+    }
     explanation: {
       toggleLabel: string
       toggleHintCollapsed: string
