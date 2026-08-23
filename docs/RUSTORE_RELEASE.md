@@ -7,6 +7,7 @@
 | Field | Value |
 |-------|--------|
 | App name | Калькулятор обоев |
+| Developer / publisher | ForestMusic |
 | Package / applicationId | `com.calculatorplatform.wallpaper` |
 | version (versionName) | `1.0.0` |
 | android.versionCode | `1` (first RuStore upload) |
@@ -122,13 +123,13 @@ If release CMake fails with `Filename longer than 260 characters`, build from a 
 | Short / full description | Ready — `docs/RUSTORE_LISTING.md` (paste into console) |
 | Screenshots | **Missing** — checklist in listing doc; capture from signed/production UI into `release-assets/` |
 | Category / age rating | Suggested: Tools / 6+ — confirm in console |
-| Privacy policy URL | **Text ready** (`docs/PRIVACY_POLICY_RU.md`, `docs/privacy.html`); **public HTTPS URL not hosted** |
-| Support / developer email | **Missing** — `SUPPORT_EMAIL_TODO` |
+| Privacy policy URL | Ready — https://alex1c.github.io/wallpaperAppRustore/privacy.html |
+| Support / developer email | Ready — alex1c-spb@yandex.ru (ForestMusic) |
 | Release notes | Ready — listing doc, version 1.0.0 |
-| Production-signed AAB/APK | **Blocked** until owner generates keystore |
-| Signing certificate (AAB) | **Blocked** until keystore exists |
+| Production-signed AAB/APK | Ready — local artifact in `release-artifacts/` (gitignored) |
+| Signing certificate (AAB) | Ready — production keystore; register PEM/PEPK in RuStore Console before first AAB upload |
 
-Privacy policy source: `docs/PRIVACY_POLICY_RU.md`. Hosting (not enabled): GitHub Pages from `/docs` → `https://alex1c.github.io/wallpaperAppRustore/privacy.html`. Do not submit to RuStore until that URL (or another HTTPS URL) loads without login.
+Privacy policy source: `docs/PRIVACY_POLICY_RU.md` (HTML: `docs/privacy.html`). Public URL: https://alex1c.github.io/wallpaperAppRustore/privacy.html
 
 ## Privacy policy requirement
 
@@ -141,7 +142,7 @@ Policy **text** is in `docs/PRIVACY_POLICY_RU.md` (HTML: `docs/privacy.html`). I
 3. **AppMetrica** — product analytics / session technical data per Yandex AppMetrica policy.
 4. **Yandex Mobile Ads** — advertising identifiers / ad serving per Yandex Advertising Network policy.
 
-Host that HTML at a stable HTTPS URL (GitHub Pages from `/docs` is the simplest option already in this repo) **before** RuStore submission. Do not enable Pages from an agent session without owner approval.
+Host that HTML at a stable HTTPS URL before RuStore submission. Current URL: https://alex1c.github.io/wallpaperAppRustore/privacy.html
 
 ## Post-publish (do not execute in Phase 6)
 

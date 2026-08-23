@@ -42,7 +42,7 @@ keytool -genkeypair -v `
 keytool will prompt for:
 
 - store password (choose a strong unique password; do not reuse the debug password `android`)
-- Distinguished Name — suggested: `CN=Calculator Platform, OU=Wallpaper, O=Calculator Platform, L=Moscow, ST=Moscow, C=RU`
+- Distinguished Name — matches the production certificate: `CN=Aleksei Ivanov, OU=ForestMusic, O=ForestMusic, L=Saint Petersburg, ST=Saint Petersburg, C=RU` (do not regenerate if your keystore already exists)
 - key password — press Enter to use the same as the store password
 
 If the file already exists, **stop**. Do not overwrite it.

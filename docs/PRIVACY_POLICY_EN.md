@@ -7,14 +7,14 @@
 
 This policy describes data processing in the Wallpaper Calculator app. It is a wallpaper-roll estimator. We do **not** claim that “no data is collected”: the app includes Yandex AppMetrica and Yandex Mobile Ads.
 
-The public HTTPS URL will be published after hosting (recommended: GitHub Pages; see `docs/RUSTORE_RELEASE.md`).
+The public policy is available at: https://alex1c.github.io/wallpaperAppRustore/privacy.html
 
 ## 1. Who processes data
 
-The operator is the developer of Wallpaper Calculator (Calculator Platform).
+The operator and developer of Wallpaper Calculator («Калькулятор обоев») is **ForestMusic** (public developer and publisher brand).
 
 - Repository: https://github.com/alex1c/wallpaperAppRustore
-- Privacy / support contact: **replace with the support email used on RuStore** (`SUPPORT_EMAIL_TODO`).
+- Privacy / support contact: **alex1c-spb@yandex.ru**
 
 There is no account system and no app backend that stores calculations.
 
@@ -88,5 +88,5 @@ The first release targets RuStore (Russia). This version does not ship a GDPR co
 
 ## 12. Contact
 
-Email: `SUPPORT_EMAIL_TODO`
+Email: alex1c-spb@yandex.ru
 GitHub Issues: https://github.com/alex1c/wallpaperAppRustore/issues (do not send personal data there)

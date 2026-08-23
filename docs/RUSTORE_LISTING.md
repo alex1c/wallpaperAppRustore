@@ -3,7 +3,11 @@
 Package: `com.calculatorplatform.wallpaper`
 Version: `1.0.0` · versionCode: `1`
 
-Paste into RuStore Console. Do not publish until a production-signed AAB/APK and a public HTTPS privacy URL exist.
+Paste into RuStore Console. Production-signed AAB and privacy URL are ready; capture screenshots before publish.
+
+## Developer / publisher
+
+ForestMusic
 
 ## App name
 
@@ -66,17 +70,11 @@ Paste into RuStore Console. Do not publish until a production-signed AAB/APK and
 
 ## Support email
 
-`SUPPORT_EMAIL_TODO` — в консоли RuStore нужен реальный ящик, который вы читаете. В репозитории публичного email нет.
+alex1c-spb@yandex.ru
 
 ## Privacy policy URL
 
-`PRIVACY_POLICY_URL_TODO`
-
-После включения GitHub Pages для этого репозитория (Settings → Pages → Deploy from branch `main`, folder `/docs`):
-
-`https://alex1c.github.io/wallpaperAppRustore/privacy.html`
-
-Не публикуйте приложение, пока URL не открывается по HTTPS без авторизации.
+https://alex1c.github.io/wallpaperAppRustore/privacy.html
 
 ## Screenshots (5–6 кадров)
 
@@ -100,6 +98,9 @@ Paste into RuStore Console. Do not publish until a production-signed AAB/APK and
 | Field | Value |
 |-------|--------|
 | Name | Калькулятор обоев |
+| Developer / publisher | ForestMusic |
 | Package | `com.calculatorplatform.wallpaper` |
 | versionName | `1.0.0` |
 | versionCode | `1` |
+| Support email | alex1c-spb@yandex.ru |
+| Privacy URL | https://alex1c.github.io/wallpaperAppRustore/privacy.html |
