@@ -93,6 +93,9 @@ AGENTS.md           AI agent entry point
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical boundaries |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Delivery phases |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Decision log |
+| [docs/RUSTORE_RELEASE.md](docs/RUSTORE_RELEASE.md) | RuStore release prep |
+| [docs/RUSTORE_LISTING.md](docs/RUSTORE_LISTING.md) | Store listing copy |
+| [docs/PRIVACY_POLICY_RU.md](docs/PRIVACY_POLICY_RU.md) | Privacy policy (Russian) |
 
 ## License
 

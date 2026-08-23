@@ -86,7 +86,7 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Spec: `docs/SHARING_AND_REPORTS.md`
 - Share/PDF remain **free** (no rewarded gating)
 
-## Phase 5C — Yandex Ads Foundation (current)
+## Phase 5C — Yandex Ads Foundation ✅
 
 - Official `yandex-mobile-ads` behind `AdService` + `SafeAdService`
 - Two non-sticky product banners after completed Quick/Precise results: `result_banner` and `footer_banner`
@@ -95,9 +95,19 @@ Phases are sequential; scope within each phase should not leak into earlier work
 - Spec: `docs/ADS.md`
 - **Deferred:** interstitial, app-open, mediation, rewarded Share/PDF
 
-## Phase 6 — Ads expansion (future)
+## Phase 6 — RuStore release preparation (current)
 
-- Mediation (RSЯ, VK Ads) after Phase 5C usage/revenue signal
+- Production config (`APP_VARIANT=production` excludes `expo-dev-client`)
+- version `1.0.0` / versionCode `1`
+- Signing, AAB/APK, store listing, privacy policy URL
+- Spec: `docs/RUSTORE_RELEASE.md`
+- Listing copy: `docs/RUSTORE_LISTING.md`
+- Privacy text: `docs/PRIVACY_POLICY_RU.md` (hosting still owner-gated)
+- **Do not publish** until signed artifact + public privacy URL + screenshots are ready
+
+## Phase 6B — Ads expansion (future)
+
+- Mediation (RSЯ, VK Ads) after first-release usage/revenue signal
 - Optional rewarded for non-core extras only (never gate calculation)
 - Frequency caps / additional placements as product decides
 
@@ -105,12 +115,11 @@ Phases are sequential; scope within each phase should not leak into earlier work
 
 - Persistent settings & last calculation
 - Accessibility audit, edge cases, performance
-- Privacy policy content, data handling
+- Privacy policy **hosting** and data-handling follow-up (policy **text** drafted in Phase 6)
 
-## Phase 8 — RuStore release
+## Phase 8 — RuStore iteration
 
-- Signing, AAB, store listing, screenshots
-- Moderation fixes, production verification
+- Moderation fixes, production verification, post-publish Yandex activation
 
 ## Phase 9 — Measurement
 
@@ -141,4 +150,4 @@ See Phase 6 — careful placements; rewarded only for extras; never block basic 
 
 ---
 
-**Current focus:** Phase 5B — Share + PDF. Do not start ads until usage data from 5A exists.
+**Current focus:** Phase 6 — RuStore release preparation. Do not publish until production signing, public privacy URL, and listing screenshots are done.

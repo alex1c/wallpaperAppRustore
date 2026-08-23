@@ -11,9 +11,10 @@ The first product is **Калькулятор обоев** (Wallpaper Calculator
 
 ## Current phase
 
-**Phase 5C — Yandex Ads Foundation** (in progress, uncommitted)
+**Phase 6 — RuStore release preparation** (in progress, uncommitted)
 
-Yandex Mobile Ads behind `AdService`: `result_banner` + `footer_banner`, rewarded infrastructure (not product-gated). Share/PDF stay free. **Do NOT** add interstitial, app-open, mediation, or rewarded gating.
+Prepare first production Android release artifact and listing prerequisites.
+**Do NOT** publish to RuStore or commit keystores/secrets. See `docs/RUSTORE_RELEASE.md`.
 
 ## Tech stack (pinned at project creation)
 
@@ -62,6 +63,9 @@ Verify exact versions in `package.json` after install.
 | [docs/ANALYTICS.md](docs/ANALYTICS.md) | Phase 5A AppMetrica taxonomy, privacy, config |
 | [docs/SHARING_AND_REPORTS.md](docs/SHARING_AND_REPORTS.md) | Phase 5B Share Sheet + text/PDF reports |
 | [docs/ADS.md](docs/ADS.md) | Phase 5C Yandex Ads foundation, placements, privacy |
+| [docs/RUSTORE_RELEASE.md](docs/RUSTORE_RELEASE.md) | Phase 6 RuStore release prep, signing, listing checklist |
+| [docs/RUSTORE_LISTING.md](docs/RUSTORE_LISTING.md) | Store copy, screenshots, category/age |
+| [docs/PRIVACY_POLICY_RU.md](docs/PRIVACY_POLICY_RU.md) | Privacy policy (RU; host before submit) |
 | [README.md](README.md) | Setup, scripts, project structure |
 
 > Before doing substantial work, read **AGENTS.md** and the documents it references.

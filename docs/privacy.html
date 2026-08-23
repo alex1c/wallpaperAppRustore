@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Политика конфиденциальности — Калькулятор обоев</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0 auto;
+      max-width: 42rem;
+      padding: 1.5rem 1.25rem 3rem;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      background: #f7f8fa;
+    }
+    main { background: #fff; padding: 1.5rem 1.25rem; border-radius: 12px; }
+    h1 { font-size: 1.55rem; margin-top: 0; }
+    h2 { font-size: 1.15rem; margin-top: 1.6rem; }
+    p, li { font-size: 1rem; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+    th, td { border: 1px solid #d8dde6; padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
+    code { font-size: 0.9em; }
+    .meta { color: #444; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Политика конфиденциальности</h1>
+    <p class="meta">
+      Приложение: <strong>Калькулятор обоев</strong><br>
+      Пакет Android: <code>com.calculatorplatform.wallpaper</code><br>
+      Версия документа: 1.0 · 23 августа 2026 г.
+    </p>
+    <p>
+      Это калькулятор для оценки количества рулонов обоев. Мы <strong>не</strong> утверждаем,
+      что «данные не собираются»: в приложении подключены AppMetrica и рекламная сеть Яндекса.
+    </p>
+
+    <h2>1. Кто обрабатывает данные</h2>
+    <p>Оператор — разработчик «Калькулятор обоев» (Calculator Platform).</p>
+    <ul>
+      <li>Репозиторий: <a href="https://github.com/alex1c/wallpaperAppRustore">github.com/alex1c/wallpaperAppRustore</a></li>
+      <li>Контакт: <code>SUPPORT_EMAIL_TODO</code> (замените на email из карточки RuStore)</li>
+    </ul>
+    <p>Личного кабинета, регистрации и сервера, который хранил бы расчёты, нет.</p>
+
+    <h2>2. Данные на устройстве</h2>
+    <p>Расчёт выполняется локально. Приложение может использовать:</p>
+    <ul>
+      <li>размеры комнаты, стен, дверей и окон;</li>
+      <li>параметры рулона и повтора рисунка (расчёт со смещением half-drop в этой версии не выполняется);</li>
+      <li>результат расчёта и PDF во внутреннем кэше.</li>
+    </ul>
+    <p>Эти сведения не отправляются на сервер разработчика.</p>
+
+    <h2>3. Что приложение не собирает само</h2>
+    <p>Нет ручного сбора контактов, SMS, камеры, микрофона и точных GPS-координат. Нет входа в аккаунт.</p>
+    <p>Разрешение рекламного идентификатора может появиться из SDK Яндекса — это не чтение записной книжки калькулятором.</p>
+
+    <h2>4. Поделиться и PDF</h2>
+    <p>
+      По вашей команде открывается системный Android Share Sheet или создаётся PDF.
+      Содержимое уходит только в выбранное вами приложение. Разработчик не видит получателя.
+    </p>
+
+    <h2>5. Аналитика (AppMetrica)</h2>
+    <p>
+      Яндекс AppMetrica считает продуктовые события (экраны, успех/ошибка расчёта, категории сбоев).
+      В события приложения не попадают точные размеры комнаты, текст отчёта, PDF, телефоны и имена.
+    </p>
+    <p>
+      SDK может обрабатывать технические данные устройства и сессии по правилам Яндекса.
+      В конфигурации приложения отключены трекинг геолокации и рекламных идентификаторов AppMetrica
+      (<code>locationTracking: false</code>, <code>advIdentifiersTracking: false</code>) — это не означает отсутствие любых технических данных SDK.
+    </p>
+    <p>
+      <a href="https://yandex.ru/legal/confidential/">Политика конфиденциальности Яндекса</a> ·
+      <a href="https://yandex.ru/legal/metrica_agreement/">условия AppMetrica</a>
+    </p>
+
+    <h2>6. Реклама (Yandex Mobile Ads)</h2>
+    <p>
+      После готового расчёта могут показываться два баннера (у результата и внизу экрана).
+      Расчёт, шаринг и PDF не закрываются rewarded-рекламой.
+    </p>
+    <p>
+      Рекламный SDK может обрабатывать рекламный идентификатор и технические данные для показа объявлений.
+    </p>
+    <p>
+      <a href="https://yandex.ru/legal/confidential/">Политика Яндекса</a> ·
+      <a href="https://yandex.com/legal/mobileads_sdk_agreement/">условия Mobile Ads SDK</a>
+    </p>
+
+    <h2>7. Для чего нужны данные</h2>
+    <table>
+      <thead><tr><th>Данные</th><th>Зачем</th></tr></thead>
+      <tbody>
+        <tr><td>Размеры и параметры обоев</td><td>Посчитать рулоны и пояснить результат</td></tr>
+        <tr><td>Текст / PDF шаринга</td><td>Вы сами отправили результат</td></tr>
+        <tr><td>События AppMetrica</td><td>Понять использование и ошибки</td></tr>
+        <tr><td>Данные рекламного SDK</td><td>Показ и учёт баннеров</td></tr>
+      </tbody>
+    </table>
+
+    <h2>8. Третьи лица</h2>
+    <p>Расчёты не продаются. Яндекс обрабатывает аналитику и рекламу по своим правилам. Share Sheet передаёт файл выбранному вами приложению.</p>
+
+    <h2>9. Хранение и удаление</h2>
+    <p>Удаление приложения или очистка данных Android удаляет локальные расчёты. Облачной копии комнат у разработчика нет. По аналитике/рекламе напишите на email поддержки; часть обработки контролирует Яндекс.</p>
+
+    <h2>10. Дети</h2>
+    <p>Приложение не предназначено специально для детей младше 13 лет.</p>
+
+    <h2>11. ЕЭЗ</h2>
+    <p>Первый релиз ориентирован на RuStore (Россия). Отдельного GDPR-диалога в этой версии нет.</p>
+
+    <h2>12. Контакт</h2>
+    <p>Email: <code>SUPPORT_EMAIL_TODO</code></p>
+    <p>Полный текст: <a href="./PRIVACY_POLICY_RU.md">PRIVACY_POLICY_RU.md</a></p>
+  </main>
+</body>
+</html>

@@ -551,3 +551,43 @@ Lightweight ADR format. New decisions append at the bottom.
 **Why:** Validate RPI with the smallest reversible ads surface while preserving trust and CNG.
 
 **Consequences:** Native rebuild required. Custom AppMetrica ad events are categorical placement signals. Consent UX may be required later for EEA distribution.
+
+---
+
+## 2026-08-21 — RuStore release preparation (Phase 6)
+
+**Status:** Accepted (preparation; not published)
+
+**Context:** Phase 5C is on `main`. First RuStore upload needs stable identity, production env, no Dev Client chrome, and a production signing plan.
+
+**Decision:**
+1. Keep package `com.calculatorplatform.wallpaper`, version `1.0.0`, `versionCode` `1`.
+2. Use `app.config.ts` with `APP_VARIANT=production` to drop the `expo-dev-client` plugin; run `npm run prebuild:android:production` so `expo-dev-*` packages are also excluded from Expo autolinking (package.json patch during prebuild).
+3. Prefer AAB (`bundleRelease`) for RuStore; APK acceptable for smoke installs.
+4. Do **not** commit production keystores or secrets; document signing as a hard pre-upload requirement.
+5. Require a public privacy policy URL before submission (AppMetrica + Yandex Ads).
+6. Post-publish: attach RuStore URL to Yandex app `19789924` before expecting stable production fill.
+7. On Windows, release native builds may need a **short real path** (copy the tree to `D:\r`). Do **not** use `subst`: React Native codegen fails with “different roots”. Ninja still enforces ~260-character object paths even when LongPathsEnabled=1.
+
+**Why:** Separate release engineering from product changes; avoid irreversible package/signing mistakes.
+
+**Consequences:** Upload remains blocked until keystore + privacy URL + listing screenshots exist. Local `.env` holds production unit IDs for release bundling only.
+
+---
+
+## 2026-08-23 — Phase 6 listing, privacy text, signing procedure
+
+**Status:** Accepted (still not published)
+
+**Context:** Production smoke on a debug-signed release already passed. Store upload still needs a durable signing key, a public privacy URL, and listing copy.
+
+**Decision:**
+1. Do not invent or generate the production keystore in git or in an agent session. Document one PKCS12 keystore (`wallpaper-release.jks`, alias `wallpaper`, RSA 2048, 10000 days) outside the repo; Gradle reads gitignored `credentials/keystore.properties`.
+2. After CNG prebuild, `scripts/apply-release-signing.cjs` rewrites Expo’s debug-signed `release` build type. `scripts/verify-release-signing.cjs` rejects `CN=Android Debug`.
+3. Privacy policy lives in `docs/PRIVACY_POLICY_RU.md` (EN companion + `docs/privacy.html`). Hosting is GitHub Pages from `/docs` — **not enabled until the owner turns Pages on**.
+4. RuStore marketing copy lives in `docs/RUSTORE_LISTING.md`. Do not claim half-drop calculation.
+5. Canonical production env names stay `EXPO_PUBLIC_APPMETRICA_API_KEY`, `EXPO_PUBLIC_YANDEX_ADS_BANNER_UNIT_ID`, `EXPO_PUBLIC_YANDEX_ADS_REWARDED_UNIT_ID`. Malformed units disable ads (fail open). `__DEV__` never uses production units.
+
+**Why:** One signing identity for all updates; honest privacy text because AppMetrica and Yandex Ads process technical data.
+
+**Consequences:** Ready-to-upload is blocked only on owner actions: create/backup keystore, publish privacy HTML, capture screenshots, set support email, then signed AAB + RuStore certificate upload. Do not commit keystores, `.env`, or `android/`.
